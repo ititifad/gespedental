@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<div class="container pt-2">
+    <h1 class="text-center">Patient Demographics</h1>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Location Distribution</h2>
+            <ul class="list-group">
+                {% for location in location_distribution %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ location.address }}
+                        <span class="badge bg-primary rounded-pill">{{ location.count }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    
+        <div class="col-md-6">
+            <h2>Gender Distribution</h2>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Male
+                    <span class="badge bg-primary rounded-pill">
+                        {% for gender in gender_distribution %}
+                            {% if gender.gender == 'M' %}
+                                {{ gender.count }}
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Female
+                    <span class="badge bg-primary rounded-pill">
+                        {% for gender in gender_distribution %}
+                            {% if gender.gender == 'F' %}
+                                {{ gender.count }}
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                </li>
+            </ul>
+      
+    </div>
+
+    <h1 class="pt-5 text-center">Treatment Analysis</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Popular Treatments</h2>
+            <ul class="list-group">
+                {% for treatment in popular_treatments %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ treatment.treatment__name }}
+                        <span class="badge bg-primary rounded-pill">{{ treatment.count }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h2>Total Revenue by Treatment</h2>
+            <ul class="list-group">
+                {% for treatment in total_revenue_by_treatment %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ treatment.treatment__name }}
+                        <span class="badge bg-primary rounded-pill">{{ treatment.total_revenue }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+<div class="container pt-5 mb-4">
+<h1 class="text-center">Patient Engagement</h1>
+<h2>Patient Visits Over Time</h2>
+<div id="patientVisitsChart"></div>
+<script>
+    var patientVisitsData = [{
+        x: [{% for entry in patient_visits_over_time %}"{{ entry.date }}", {% endfor %}],
+        y: [{% for entry in patient_visits_over_time %}{{ entry.visit_count }}, {% endfor %}],
+        type: 'bar',
+        name: 'Patient Visits'
+    }];
+
+    var patientVisitsLayout = {
+        title: 'Patient Visits Over Time',
+        xaxis: { title: 'Date' },
+        yaxis: { title: 'Number of Visits' }
+    };
+
+    Plotly.newPlot('patientVisitsChart', patientVisitsData, patientVisitsLayout);
+</script>
+<br>
+<h1 class="text-center">Revenue Trends</h1>
+<h2>Monthly Revenue Trends</h2>
+<div id="monthlyRevenueChart"></div>
+<script>
+    var monthlyRevenueData = [{
+        x: [{% for entry in monthly_revenue_trends %}"{{ entry.month|date:'F Y' }}", {% endfor %}],
+        y: [{% for entry in monthly_revenue_trends %}{{ entry.total_revenue }}, {% endfor %}],
+        type: 'line',
+        name: 'Monthly Revenue'
+    }];
+
+    var monthlyRevenueLayout = {
+        title: 'Monthly Revenue Trends',
+        xaxis: { title: 'Month' },
+        yaxis: { title: 'Revenue' }
+    };
+
+    Plotly.newPlot('monthlyRevenueChart', monthlyRevenueData, monthlyRevenueLayout);
+</script>
+
+<h2 class="pt-5">Yearly Revenue Trends</h2>
+<div id="yearlyRevenueChart"></div>
+<script>
+    var yearlyRevenueData = [{
+        x: [{% for entry in yearly_revenue_trends %}"{{ entry.year }}", {% endfor %}],
+        y: [{% for entry in yearly_revenue_trends %}{{ entry.total_revenue }}, {% endfor %}],
+        type: 'bar',
+        name: 'Yearly Revenue'
+    }];
+
+    var yearlyRevenueLayout = {
+        title: 'Yearly Revenue Trends',
+        xaxis: { title: 'Year' },
+        yaxis: { title: 'Revenue' }
+    };
+
+    Plotly.newPlot('yearlyRevenueChart', yearlyRevenueData, yearlyRevenueLayout);
+</script>
+</div>
+   
+{% endblock content %}

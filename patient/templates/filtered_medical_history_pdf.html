@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
+    <title>Filtered Medical History</title>
+    
+</head>
+<body>
+    <h1 class="text-center">Medical History</h1>
+
+    
+    <table class="table table-bordered">
+        
+            <tr>
+                <th>#</th>
+                <th>Patient</th>
+                <th>Treatment</th>
+                <th>Amount</th>
+                <th>Payment Type</th>
+                <th>Date</th>
+            </tr>
+        
+        
+            {% for record in filtered_records %}
+                <tr>
+                    <th>{{forloop.counter}}</th>
+                    <td>{{ record.patient }}</td>
+                    <td>{{ record.treatment }}</td>
+                    <td>{{ record.amount }}</td>
+                    <td>{{ record.payment_type }}</td>
+                    <td>{{ record.created_at|date }}</td>
+                </tr>
+            {% endfor %}
+        
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

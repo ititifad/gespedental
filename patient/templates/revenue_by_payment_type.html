@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<style>
+    .row{
+        justify-content: center;
+    }
+
+    h2{
+        text-align: center;
+    }
+</style>
+
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Revenue by Payment Type</h1>
+
+    <h2>Daily Revenue</h2>
+    <div class="row">
+        {% for item in daily_revenue %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.payment_type }}</h5>
+                    <p class="card-text">Total Revenue: TZS {{ item.total_revenue|intcomma }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2>Weekly Revenue</h2>
+    <div class="row">
+        {% for item in weekly_revenue %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.payment_type }}</h5>
+                    <p class="card-text">Total Revenue: TZS {{ item.total_revenue|intcomma }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2>Monthly Revenue</h2>
+    <div class="row">
+        {% for item in monthly_revenue %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.payment_type }}</h5>
+                    <p class="card-text">Total Revenue: TZS {{ item.total_revenue|intcomma }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2>Yearly Revenue</h2>
+    <div class="row">
+        {% for item in yearly_revenue %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.payment_type }}</h5>
+                    <p class="card-text">Total Revenue: TZS {{ item.total_revenue|intcomma }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

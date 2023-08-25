@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+
+<div class="container mb-4">
+    <h1 class="text-center pt-3 mb-4">Filter Medical History</h1>
+
+    <form method="get">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">{{ filter.form.patient.label_tag }}</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="{{ filter.form.patient.name }}"
+                           value="{{ filter.form.patient.value }}">
+                    
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <label class="form-label">{{ filter.form.treatment.label_tag }}</label>
+               
+                <select class="form-select" name="{{ filter.form.treatment.name }}">
+                    <option value="" selected>Choose Treatment...</option>
+                    {% for treatment in filter.form.treatment.field.queryset %}
+                        <option value="{{ treatment.pk }}" {% if treatment.pk == filter.form.treatment.value %}selected{% endif %}>{{ treatment }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">{{ filter.form.payment_type.label_tag }}</label>
+                <select class="form-select" name="{{ filter.form.payment_type.name }}">
+                    <option value="" selected>Choose Payment Type...</option>
+                    {% for payment_type in filter.form.payment_type.field.queryset %}
+                        <option value="{{ payment_type.pk }}" {% if payment_type.pk == filter.form.payment_type.value %}selected{% endif %}>{{ payment_type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+     
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">{{ filter.form.min_date.label_tag }}</label>
+                <input type="date" class="form-control" name="{{ filter.form.min_date.name }}"
+                       value="{{ filter.form.min_date.value }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">{{ filter.form.max_date.label_tag }}</label>
+                <input type="date" class="form-control" name="{{ filter.form.max_date.name }}"
+                       value="{{ filter.form.max_date.value }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+            </div>
+        </div>
+    </form>
+    
+
+    <br>
+    <br>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Treatment</th>
+                <th>Amount</th>
+                <th>Payment Type</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in filtered_records %}
+                <tr>
+                    <td>{{ record.patient }}</td>
+                    <td>{{ record.treatment }}</td>
+                    <td>{{ record.amount }}</td>
+                    <td>{{ record.payment_type }}</td>
+                    <td>{{ record.created_at|date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'export_csv' %}?{{ request.GET.urlencode }}" class="btn btn-primary">Export as CSV</a>
+    <a href="{% url 'export_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-primary">Export as PDF</a>
+
+</div>
+
+
+
+
+{% endblock content %}

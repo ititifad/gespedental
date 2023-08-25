@@ -1,0 +1,225 @@
+body {
+    background-color: #f8f8f8; /* Set your default background color here */
+  }
+  
+  /* Toggle Icon Styles */
+  .toggle-icon {
+    position: absolute;
+    top: 28px;
+    right: 100px;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 2; /* Bring the icon forward */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #4E4E4E; /* Dark gray background color for the toggle icon circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Customize your dark mode icon */
+  #dark-icon {
+    color: #ffffff;
+  }
+  
+  /* Customize your light mode icon */
+  #light-icon {
+    color: #ffffff; /* Pink color for the light mode icon */
+  }
+  
+  /* Dark mode styles */
+  body.dark-mode {
+    background-color: #323339; /* Set your dark mode background color here */
+  }
+  
+  body.dark-mode h1 {
+    color: #ffffff; /* White color for headings in dark mode */
+  }
+  
+  body.dark-mode h2 {
+    color: #ffffff; /* White color for headings in dark mode */
+  }
+  
+  body.dark-mode h3 {
+    color: #ffffff; /* White color for headings in dark mode */
+  }
+  
+  .dark-mode .form-label {
+    color: #ffffff; /* White label color in dark mode */
+  }
+  
+  .dark-mode .form-outline .form-label {
+    color: #ffffff; /* White label color in dark mode */
+  }
+  
+  body.dark-mode p {
+    color: #ffffff; /* White color for paragraphs in dark mode */
+  }
+  
+  body.dark-mode .form-label {
+    color: #ffffff; /* White color for form labels in dark mode */
+  }
+  
+  /* Show dark mode icon in dark mode */
+  body.dark-mode #dark-icon {
+    display: inline;
+  }
+  
+  /* Show light mode icon in dark mode */
+  body.dark-mode #light-icon {
+    display: none;
+  }
+  
+  /* Show light mode icon in light mode */
+  body:not(.dark-mode) #light-icon {
+    display: inline;
+  }
+  
+  /* Hide dark mode icon in light mode */
+  body:not(.dark-mode) #dark-icon {
+    display: none;
+  }
+  
+
+.dark-mode h4 {
+    color: #fff; /* Dark mode heading color */
+}
+
+
+
+.dark-mode .text-muted {
+    color: #ffffff; /* Dark mode muted text color */
+}
+
+.dark-mode .card {
+    background-color: #444; /* Dark mode card background color */
+    color: #fff; /* Dark mode card text color */
+    border: 1px solid #555; /* Dark mode card border color */
+}
+
+.dark-mode .form-control {
+  color: #fff; /* White text color for form input in dark mode */
+}
+
+.dark-mode .navbar {
+  background-color: #333; /* Dark mode navbar background color */
+}
+
+.dark-mode .navbar-nav .nav-link {
+  color: #fff; /* White text color for navbar items in dark mode */
+}
+
+.dark-mode .navbar-toggler {
+  border-color: #fff; /* White border color for navbar toggler in dark mode */
+}
+
+.dark-mode .navbar-toggler i {
+  color: #fff; /* White icon color for navbar toggler in dark mode */
+}
+
+.dark-mode .counter-container{
+  color: #fff; /* White icon color for navbar toggler in dark mode */
+}
+
+/* Other styles for dark mode */
+
+.dark-mode table {
+  background-color: #444; /* Dark mode table background color */
+  color: #fff; /* White text color for table in dark mode */
+}
+
+.dark-mode .table th,
+.dark-mode .table td {
+  border-color: #555; /* Dark mode table border color */
+}
+
+.dark-mode .table thead th {
+  background-color: #555; /* Dark mode table header background color */
+  color: #fff; /* White text color for table header in dark mode */
+}
+
+.dark-mode .table th.scope {
+  background-color: #777; /* Dark mode table header background color for scope th */
+}
+
+/* Optional: Style the buttons in dark mode */
+.dark-mode .btn-primary {
+  background-color: #007bff; /* Dark mode primary button background color */
+  border-color: #007bff; /* Dark mode primary button border color */
+  color: #fff; /* White text color for primary button in dark mode */
+}
+
+.dark-mode .btn-primary:hover {
+  background-color: #0056b3; /* Dark mode primary button hover background color */
+  border-color: #0056b3; /* Dark mode primary button hover border color */
+}
+
+
+/* Dark mode styling for datetime input fields */
+.dark-mode input[type="datetime-local"]::-webkit-datetime-edit {
+  color: #fff; /* White text color for datetime input in dark mode */
+  padding: 0.5rem; /* Adjust padding as needed for better alignment */
+  background-color: #555; /* Dark mode datetime input background color */
+  border: 1px solid #777; /* Dark mode datetime input border color */
+}
+
+.dark-mode input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
+  display: flex;
+}
+
+.dark-mode input[type="datetime-local"]::-webkit-datetime-edit-text {
+  flex: 1;
+}
+
+/* Optional: Style the submit button in dark mode */
+.dark-mode .btn-primary {
+  background-color: #007bff; /* Dark mode primary button background color */
+  border-color: #007bff; /* Dark mode primary button border color */
+  color: #fff; /* White text color for primary button in dark mode */
+}
+
+.dark-mode .btn-primary:hover {
+  background-color: #0056b3; /* Dark mode primary button hover background color */
+  border-color: #0056b3; /* Dark mode primary button hover border color */
+}
+
+.list-group-item {
+  background-color: #fff; /* White background color for list items */
+  color: #000; /* Black text color for list items */
+}
+
+/* Optional: Dark mode styles */
+.dark-mode .list-group-item {
+  background-color: #444; /* Dark mode background color for list items */
+  color: #fff; /* White text color for list items in dark mode */
+}
+
+/* Optional: Style the link inside the list item */
+.list-group-item a {
+  color: #38424d; /* Link color in both black and white modes */
+}
+
+/* Optional: Link color in dark mode */
+.dark-mode .list-group-item a {
+  color: #ffffff; /* Link color in dark mode */
+  font-weight: 500;
+}
+
+/* Optional: Hover effect for links */
+.list-group-item a:hover {
+  text-decoration: none; /* Add underline on hover in both modes */
+}
+
+/* Optional: Hover effect for links in dark mode */
+.dark-mode .list-group-item a:hover {
+  text-decoration: none; /* Remove underline on hover in dark mode */
+}
+
+.dark-mode .form-control {
+  background-color: #4d4c4c; /* Set your dark mode input background color here */
+  color: #fff; /* Set your dark mode input text color here */
+  border-color: #555; /* Set your dark mode input border color here */
+}
