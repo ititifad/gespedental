@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-m6^fae)28hvs9(+h$9@)3bnlk=@-ii1h^jt!7!ojkq7xlc(+s-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -144,3 +144,5 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+CSRF_TRUSTED_ORIGINS = ["https://gespedental-production.up.railway.app/"]
