@@ -4,19 +4,23 @@ from .models import Patient, MedicalHistory
 from .forms import *
 from datetime import datetime, timedelta
 from django.db.models.functions import TruncDate, TruncMonth, TruncYear  # Add this import
-
+from .utils import render_to_pdf
+from django.conf import settings
 from django.template.loader import get_template
 from django.contrib import messages
 from django.db.models import Count, Sum
 from django.http import HttpResponse
 from django.views import View
+from xhtml2pdf import pisa
+from django.template.loader import render_to_string
+import io
 import calendar
 from .filters import MedicalHistoryFilter
-from weasyprint import HTML
+
 import csv
 from io import BytesIO
 
-os.add_dll_directory(r"C:\Program Files\GTK3-Runtime Win64\bin")
+
 
 def is_valid_queryparam(param):
     return param != '' and param is not None
@@ -337,15 +341,19 @@ class ExportFilteredMedicalHistoryPDFView(View):
         filter = MedicalHistoryFilter(request.GET, queryset=MedicalHistory.objects.all())
         filtered_records = filter.qs
 
-        template_path = 'filtered_medical_history_pdf.html'
+        template = 'filtered_medical_history_pdf.html'
         context = {'filtered_records': filtered_records}
+        html = render_to_string(template, context)
 
-        html_template = render(request, template_path, context).content
-        pdf_file = HTML(string=html_template).write_pdf()
+        pdf_file = io.BytesIO()
 
-        response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="filtered_medical_history.pdf"'
+        pisa.CreatePDF(html, dest=pdf_file)
+
+        response = HttpResponse(pdf_file.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="filtered_medical_history.pdf"'
+  
         return response
+
 
 
 
@@ -564,6 +572,39 @@ class AnalyticsByDoctorView(View):
         return total_revenue
     
 
+# def generate_invoice_pdf(request, history_id):
+#     history = MedicalHistory.objects.get(id=history_id)
+
+#     # Get template HTML
+#     template = get_template('invoice.html')
+#     context = {'history': history}
+#     html = template.render(context)
+
+#     # Create a PDF file
+#     pdf_file = HTML(string=html).write_pdf()
+
+#     # Generate a response
+#     response = HttpResponse(pdf_file, content_type='application/pdf')
+#     response['Content-Disposition'] = f'attachment; filename="invoice_{history.id}.pdf"'
+#     return response
+
+# @login_required
+# def generate_invoice_pdf(request, history_id):
+#     history = MedicalHistory.objects.get(id=history_id)
+
+#     # image_url = 'https://i.imgur.com/INCX0Dm.jpeg'
+
+#     template = get_template('invoice.html')
+    
+#     context = {
+#         'history':history,
+#         'STATIC_ROOT': settings.STATIC_ROOT,
+#         # 'image_url': image_url
+#     }
+#     html = template.render(context)
+#     pdf = render_to_pdf('invoice.html', context)
+#     return HttpResponse(pdf, content_type='application/pdf')
+
 def generate_invoice_pdf(request, history_id):
     history = MedicalHistory.objects.get(id=history_id)
 
@@ -573,10 +614,11 @@ def generate_invoice_pdf(request, history_id):
     html = template.render(context)
 
     # Create a PDF file
-    pdf_file = HTML(string=html).write_pdf()
+    pdf_file = io.BytesIO()
+    pisa.CreatePDF(html, dest=pdf_file)
 
     # Generate a response
-    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response = HttpResponse(pdf_file.getvalue(), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="invoice_{history.id}.pdf"'
     return response
 

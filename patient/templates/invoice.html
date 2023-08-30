@@ -1,156 +1,140 @@
 {% load static %}
 {% load humanize %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice</title>
     <style>
         body {
             font-family: Arial, sans-serif;
         }
-
-        .invoice-container {
-            width: 100%;
+        .invoice {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 7px;
             border: 1px solid #ccc;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            font-size: 12px;
         }
-
-        .header {
+        .logo {
+            text-align: center;
+            
+        }
+        .invoice-title {
+            font-size: 24px;
+            text-align: center;
+            
+        }
+        .invoice-details {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            
         }
-
-        .logo img {
-            max-height: 60px;
+        .left-column {
+            flex: 1;
         }
-
-        .company-info {
+        .right-column {
+            flex: 1;
             text-align: right;
         }
-
-        .patient-info {
-            margin-top: 30px;
-        }
-
-        .services {
-            margin-top: 30px;
-        }
-
         .table {
             width: 100%;
             border-collapse: collapse;
+            
         }
-
         .table th, .table td {
-            padding: 10px;
+            padding: 5px;
             border: 1px solid #ccc;
         }
-
-        .table th {
-            background-color: #f2f2f2;
+        .section-heading {
+            font-size: 20px;
+            
         }
-
-        .total {
-            margin-top: 20px;
+        .footer {
             text-align: right;
-        }
-
-        .title {
-            font-size: 14px;
             font-weight: bold;
-            margin-top: 20px;
+            font-size: 16px;
+            
         }
     </style>
 </head>
 <body>
-    <div class="invoice-container">
-        <div class="header">
-            <div class="logo">
-                <img src="https://cdn.pixabay.com/photo/2020/08/12/15/11/tooth-5482904_1280.png" alt="Company Logo">
+    <div class="invoice">
+        
+        <h1 class="invoice-title">Geita Specialized Dental Clinic</h1>
+        
+        <div class="invoice-details">
+            <div class="left-column">
+                <p><strong>Invoice Number:</strong> {{ history.id }}</p>
+                <p><strong>Invoice Date:</strong> {{ history.created_at }}</p>
+                <!-- Add more details here if needed -->
             </div>
-            <div class="company-info">
-                <p>Geita Specialized Dental Clinic</p>
-                <p>Soko la Dhahabu</p>
-                <p>Geita,Tanzania</p>
-                <p>Email: info@company.com</p>
-                <p>Phone: (123) 456-7890</p>
+            <div class="right-column">
+                <p><strong>Bill To:</strong> {{ history.patient.firstname }} {{ history.patient.lastname }}</p>
+                <p><strong>Due Date:</strong> {{ history.follow_up_date }}</p>
+                <!-- Add more details here if needed -->
             </div>
         </div>
-        <div class="patient-info">
-            <p>Invoice Date: {{ history.created_at|date }}</p>
-            <p>Patient: {{ history.patient.firstname }} {{ history.patient.lastname }}</p>
-            <p>Payment Type: {{ history.payment_type }}</p>
-        </div>
-        <div class="services">
-            <h2>Services:</h2>
-            {% if history.treatment.exists %}
-                <div class="title">Treatments:</div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Service</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for treatment in history.treatment.all %}
-                            <tr>
-                                <td>{{ treatment.name }}</td>
-                                <td>TZS {{ treatment.price|intcomma }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
 
-            {% if history.investgation.exists %}
-                <div class="title">Investigations:</div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Service</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for investigation in history.investgation.all %}
-                            <tr>
-                                <td>{{ investigation.name }}</td>
-                                <td>TZS {{ investigation.price|intcomma }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
+        <h2 class="section-heading">Treatment</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Unit Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for treatment in history.treatment.all %}
+                    <tr>
+                        <td>{{ treatment.name }}</td>
+                        
+                        <td>{{ treatment.price|intcomma }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-            {% if history.medication.exists %}
-                <div class="title">Medications:</div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Service</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for medication in history.medication.all %}
-                            <tr>
-                                <td>{{ medication.name }}</td>
-                                <td>TZS {{ medication.price|intcomma }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-        </div>
-        <div class="total">
-            <h3>Total Amount: TZS {{ history.calculate_total_price|intcomma }}</h3>
-        </div>
+        <h2 class="section-heading">Investigation</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Unit Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for investigation in history.investgation.all %}
+                    <tr>
+                        <td>{{ investigation.name }}</td>
+                        <td>{{ investigation.price|intcomma }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2 class="section-heading">Medication</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Unit Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for medication in history.medication.all %}
+                    <tr>
+                        <td>{{ medication.name }}</td>
+                        <td>{{ medication.price|intcomma }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p class="footer">Total: {{ history.calculate_total_price|intcomma }}</p>
     </div>
 </body>
 </html>
