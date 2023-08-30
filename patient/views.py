@@ -1,8 +1,10 @@
+import os
 from django.shortcuts import render, redirect
 from .models import Patient, MedicalHistory
 from .forms import *
 from datetime import datetime, timedelta
 from django.db.models.functions import TruncDate, TruncMonth, TruncYear  # Add this import
+
 from django.template.loader import get_template
 from django.contrib import messages
 from django.db.models import Count, Sum
@@ -14,6 +16,7 @@ from weasyprint import HTML
 import csv
 from io import BytesIO
 
+os.add_dll_directory(r"C:\Program Files\GTK3-Runtime Win64\bin")
 
 def is_valid_queryparam(param):
     return param != '' and param is not None
