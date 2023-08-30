@@ -15,10 +15,38 @@
     <style>
 
 
-    .nav-smaller-bold {
-  font-size: 14px; /* Adjust the font size as needed */
-  font-weight: 600; /* Bold font weight */
-}
+   
+.notification {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .bell-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #f2f2f2;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 15px;
+        color: #007bff;
+        font-size: 24px;
+    }
+    .badge-zero {
+        position: absolute;
+        top: -15px;
+        left: 6px;
+        background-color: #f44336;
+        color: #fff;
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 50%;
+    }
 
 
   </style>
@@ -59,17 +87,54 @@
         <li class="nav-item">
           <a class="nav-link nav-smaller-bold" href="{% url 'register' %}">Patient Registration</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link nav-smaller-bold" href="{% url 'history' %}">Generate Invoice</a>
+        </li>
 
-        <li class="nav-item">
-          <a class="nav-link nav-smaller-bold" href="{% url 'analytics' %}">Reports</a>
+        <!-- <li class="nav-item">
+          <a class="nav-link nav-smaller-bold" href="{% url 'analytics' %}">Analytics Report</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link nav-smaller-bold" href="{% url 'reports' %}">Reports2</a>
-        </li>
+            <a class="nav-link nav-smaller-bold" href="{% url 'reports' %}">Revenue Report</a>
+        </li> -->
         <li class="nav-item">
-          <a class="nav-link nav-smaller-bold" href="{% url 'filtered' %}">Reports3</a>
+          
+          <a class="nav-link nav-smaller-bold" href="{% url 'filtered' %}">Filter Data</a>
+        </li>
+      <!-- </li>
+      <li class="nav-item">
+        <a class="nav-link nav-smaller-bold" href="{% url 'analytics_by_doctor' %}">Analytics by Doctor</a>
+    </li> -->
+    <li class="nav-item">
+    <div class="btn-group">
+      <button type="button" class="btn btn-sm btn-info dropdown-toggle dropdown-toggle-split" data-mdb-toggle="dropdown" aria-expanded="false">
+        View Reports
+      </button>
+      <ul class="dropdown-menu">
+        
+        <li><a class="dropdown-item" href="{% url 'analytics' %}">Analytics Report</a></li>
+        <li><a class="dropdown-item" href="{% url 'reports' %}">Revenue Report</a></li>
+        <li><a class="dropdown-item" href="{% url 'analytics_by_doctor' %}">Doctor's Report</a></li>
       </li>
-      
+      </ul>
+    </div>
+
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'upcoming_follow_up' %}">
+          <span class="position-relative">
+              <i class="fas fa-bell"></i>
+              {% if upcoming_follow_up_count > 0 %}
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {{ upcoming_follow_up_count }}
+                      <span class="visually-hidden">upcoming follow-ups</span>
+                  </span>
+              {% else %}
+                  <span class="badge-zero">0</span>
+              {% endif %}
+          </span>
+      </a>
+  </li>
+  
 
       </ul>
       <!-- Left links -->

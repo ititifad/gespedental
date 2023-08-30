@@ -3,6 +3,7 @@ from .models import Patient, MedicalHistory
 from .forms import *
 from datetime import datetime, timedelta
 from django.db.models.functions import TruncDate, TruncMonth, TruncYear  # Add this import
+from django.template.loader import get_template
 from django.contrib import messages
 from django.db.models import Count, Sum
 from django.http import HttpResponse
@@ -20,8 +21,27 @@ def is_valid_queryparam(param):
 
 today = datetime.now().date()
 
+
+def medical_history(request):
+    qs = MedicalHistory.objects.order_by('-id')
+    firstname_contains_query = request.GET.get('firstname_contains')
+
+    lastname_contains_query = request.GET.get('lastname_contains')
+
+    if is_valid_queryparam(firstname_contains_query):
+        qs = qs.filter(patient__firstname__icontains=firstname_contains_query)
+
+    if is_valid_queryparam(lastname_contains_query):
+        qs = qs.filter(patient__lastname__icontains=lastname_contains_query)
+
+    context = {
+        'history':qs
+    }
+
+    return render(request, 'medical_history.html', context)
+
 def home(request):
-    qs = Patient.objects.all()
+    qs = Patient.objects.order_by('-id')
     
 
 
@@ -94,6 +114,51 @@ def patient_detail(request, pk):
     return render(request, 'patient_detail.html', context)
 
 
+# class AnalyticsView(View):
+#     def get(self, request, *args, **kwargs):
+#         # Patient Demographics
+#         gender_distribution = Patient.objects.values('gender').annotate(count=Count('id'))
+#         location_distribution = Patient.objects.values('address').annotate(count=Count('id'))
+
+#         # Treatment Analysis
+#         popular_treatments = MedicalHistory.objects.values('treatment__name').annotate(count=Count('id')).order_by('-count')[:5]
+#         total_revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('amount')).order_by('-total_revenue')
+
+#         # Payment Insights
+#         payment_type_distribution = MedicalHistory.objects.values('payment_type__name').annotate(count=Count('id'))
+#         revenue_by_payment_type = MedicalHistory.objects.values('payment_type__name').annotate(total_revenue=Sum('amount')).order_by('-total_revenue')
+
+#         # Patient Engagement
+#         patient_visits_over_time = MedicalHistory.objects.annotate(date=TruncDate('created_at')).values('date').annotate(visit_count=Count('id')).order_by('date')
+#         new_patient_acquisition_rate = Patient.objects.filter(created_at__gte=today).count() / Patient.objects.all().count() * 100
+
+#         # Revenue Trends
+#         monthly_revenue_trends = MedicalHistory.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(total_revenue=Sum('amount')).order_by('month')
+#         yearly_revenue_trends = MedicalHistory.objects.annotate(year=TruncYear('created_at')).values('year').annotate(total_revenue=Sum('amount')).order_by('year')
+#         revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('amount')).order_by('-total_revenue')
+
+#         # Medical History
+#         total_medical_history_entries = MedicalHistory.objects.count()
+#         top_patients_by_medical_history = Patient.objects.annotate(history_count=Count('patientmedicalhistory')).order_by('-history_count')[:5]
+
+#         context = {
+#             'gender_distribution': gender_distribution,
+#             'location_distribution': location_distribution,
+#             'popular_treatments': popular_treatments,
+#             'total_revenue_by_treatment': total_revenue_by_treatment,
+#             'payment_type_distribution': payment_type_distribution,
+#             'revenue_by_payment_type': revenue_by_payment_type,
+#             'patient_visits_over_time': patient_visits_over_time,
+#             'new_patient_acquisition_rate': new_patient_acquisition_rate,
+#             'monthly_revenue_trends': monthly_revenue_trends,
+#             'yearly_revenue_trends': yearly_revenue_trends,
+#             'revenue_by_treatment': revenue_by_treatment,
+#             'total_medical_history_entries': total_medical_history_entries,
+#             'top_patients_by_medical_history': top_patients_by_medical_history,
+#         }
+
+#         return render(request, 'analytics.html', context)
+
 class AnalyticsView(View):
     def get(self, request, *args, **kwargs):
         # Patient Demographics
@@ -102,20 +167,21 @@ class AnalyticsView(View):
 
         # Treatment Analysis
         popular_treatments = MedicalHistory.objects.values('treatment__name').annotate(count=Count('id')).order_by('-count')[:5]
-        total_revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('amount')).order_by('-total_revenue')
+        total_revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('treatment__price')).order_by('-total_revenue')
 
         # Payment Insights
         payment_type_distribution = MedicalHistory.objects.values('payment_type__name').annotate(count=Count('id'))
-        revenue_by_payment_type = MedicalHistory.objects.values('payment_type__name').annotate(total_revenue=Sum('amount')).order_by('-total_revenue')
+        revenue_by_payment_type = MedicalHistory.objects.values('payment_type__name').annotate(total_revenue=Sum('treatment__price')).order_by('-total_revenue')
 
         # Patient Engagement
         patient_visits_over_time = MedicalHistory.objects.annotate(date=TruncDate('created_at')).values('date').annotate(visit_count=Count('id')).order_by('date')
-        new_patient_acquisition_rate = Patient.objects.filter(created_at__gte=today).count() / Patient.objects.all().count() * 100
+        today = datetime.now().date()
+        new_patient_acquisition_rate = Patient.objects.filter(created_at__date=today).count() / Patient.objects.all().count() * 100
 
         # Revenue Trends
-        monthly_revenue_trends = MedicalHistory.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(total_revenue=Sum('amount')).order_by('month')
-        yearly_revenue_trends = MedicalHistory.objects.annotate(year=TruncYear('created_at')).values('year').annotate(total_revenue=Sum('amount')).order_by('year')
-        revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('amount')).order_by('-total_revenue')
+        monthly_revenue_trends = MedicalHistory.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(total_revenue=Sum('treatment__price')).order_by('month')
+        yearly_revenue_trends = MedicalHistory.objects.annotate(year=TruncYear('created_at')).values('year').annotate(total_revenue=Sum('treatment__price')).order_by('year')
+        revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('treatment__price')).order_by('-total_revenue')
 
         # Medical History
         total_medical_history_entries = MedicalHistory.objects.count()
@@ -139,6 +205,50 @@ class AnalyticsView(View):
 
         return render(request, 'analytics.html', context)
     
+
+# class RevenueByPaymentTypeView(View):
+#     def get(self, request, *args, **kwargs):
+#         # Get payment types
+#         payment_types = PaymentType.objects.all()
+
+#         # Calculate date ranges for each time interval
+#         today = datetime.now().date()
+#         last_week_start = today - timedelta(days=today.weekday() + 7)
+#         last_month_start = today.replace(day=1) - timedelta(days=1)
+#         last_year_start = today.replace(month=1, day=1) - timedelta(days=1)
+
+#         # Aggregate revenue data
+#         daily_revenue = self.aggregate_revenue(today, today)
+#         weekly_revenue = self.aggregate_revenue(last_week_start, today)
+#         monthly_revenue = self.aggregate_revenue(last_month_start, today)
+#         yearly_revenue = self.aggregate_revenue(last_year_start, today)
+
+#         context = {
+#             'payment_types': payment_types,
+#             'daily_revenue': daily_revenue,
+#             'weekly_revenue': weekly_revenue,
+#             'monthly_revenue': monthly_revenue,
+#             'yearly_revenue': yearly_revenue,
+#         }
+
+#         return render(request, 'revenue_by_payment_type.html', context)
+
+#     def aggregate_revenue(self, start_date, end_date):
+#         revenue_data = []
+#         payment_types = PaymentType.objects.all()
+        
+#         for payment_type in payment_types:
+#             total_revenue = MedicalHistory.objects.filter(
+#                 payment_type=payment_type,
+#                 created_at__date__range=(start_date, end_date)
+#             ).aggregate(total_revenue=Sum('calculate_total_price'))['total_revenue']
+#             if total_revenue is None:
+#                 total_revenue = 0
+#             revenue_data.append({
+#                 'payment_type': payment_type,
+#                 'total_revenue': total_revenue,
+#             })
+#         return revenue_data
 
 class RevenueByPaymentTypeView(View):
     def get(self, request, *args, **kwargs):
@@ -170,17 +280,23 @@ class RevenueByPaymentTypeView(View):
     def aggregate_revenue(self, start_date, end_date):
         revenue_data = []
         payment_types = PaymentType.objects.all()
+
         for payment_type in payment_types:
-            total_revenue = MedicalHistory.objects.filter(
+            total_revenue = 0
+
+            medical_histories = MedicalHistory.objects.filter(
                 payment_type=payment_type,
                 created_at__date__range=(start_date, end_date)
-            ).aggregate(total_revenue=Sum('amount'))['total_revenue']
-            if total_revenue is None:
-                total_revenue = 0
+            )
+
+            for history in medical_histories:
+                total_revenue += history.calculate_total_price()
+
             revenue_data.append({
                 'payment_type': payment_type,
                 'total_revenue': total_revenue,
             })
+
         return revenue_data
     
 
@@ -209,7 +325,7 @@ class ExportFilteredMedicalHistoryView(View):
         writer.writerow(['Patient', 'Treatment', 'Amount', 'Payment Type', 'Date'])
 
         for record in filtered_records:
-            writer.writerow([record.patient, record.treatment, record.amount, record.payment_type, record.created_at])
+            writer.writerow([record.patient, record.treatment, record.calculate_total_price(), record.payment_type, record.created_at])
 
         return response
 
@@ -271,3 +387,208 @@ def filter(request):
     }
 
     return render(request, 'filters.html', context)
+
+
+# class AnalyticsByDoctorView(View):
+#     def get(self, request, *args, **kwargs):
+#         doctors = Doctor.objects.all()
+
+#         # Calculate date ranges for each time interval
+#         today = datetime.now().date()
+#         last_week_start = today - timedelta(days=today.weekday() + 7)
+#         last_month_start = today.replace(day=1) - timedelta(days=1)
+#         last_year_start = today.replace(month=1, day=1) - timedelta(days=1)
+
+#         doctor_revenue_data = []
+        
+#         for doctor in doctors:
+#             daily_revenue = self.aggregate_revenue(doctor, today, today)
+#             weekly_revenue = self.aggregate_revenue(doctor, last_week_start, today)
+#             monthly_revenue = self.aggregate_revenue(doctor, last_month_start, today)
+#             yearly_revenue = self.aggregate_revenue(doctor, last_year_start, today)
+
+#             doctor_revenue_data.append({
+#                 'doctor': doctor,
+#                 'daily_revenue': daily_revenue,
+#                 'weekly_revenue': weekly_revenue,
+#                 'monthly_revenue': monthly_revenue,
+#                 'yearly_revenue': yearly_revenue,
+#             })
+
+#         context = {
+#             'doctor_revenue_data': doctor_revenue_data,
+#         }
+
+#         return render(request, 'analytics_by_doctor.html', context)
+
+#     def aggregate_revenue(self, doctor, start_date, end_date):
+#         revenue_data = []
+#         payment_types = doctor.medicalhistory_set.values('payment_type__name').annotate(count=Count('id'))
+
+#         for payment_type in payment_types:
+#             total_revenue = doctor.medicalhistory_set.filter(
+#                 payment_type__name=payment_type['payment_type__name'],
+#                 created_at__date__range=(start_date, end_date)
+#             ).aggregate(total_revenue=Sum('treatment__price'))['total_revenue']
+#             if total_revenue is None:
+#                 total_revenue = 0
+#             revenue_data.append({
+#                 'payment_type': payment_type['payment_type__name'],
+#                 'total_revenue': total_revenue,
+#             })
+#         return revenue_data
+
+# class AnalyticsByDoctorView(View):
+#     def get(self, request, *args, **kwargs):
+#         doctors = Doctor.objects.all()
+
+#         # Calculate date ranges for each time interval
+#         today = datetime.now().date()
+#         last_week_start = today - timedelta(days=today.weekday() + 7)
+#         last_month_start = today.replace(day=1) - timedelta(days=1)
+#         last_year_start = today.replace(month=1, day=1) - timedelta(days=1)
+
+#         doctor_revenue_data = []
+#         total_revenue = 0
+        
+#         for doctor in doctors:
+#             daily_revenue = self.aggregate_revenue(doctor, today, today)
+#             weekly_revenue = self.aggregate_revenue(doctor, last_week_start, today)
+#             monthly_revenue = self.aggregate_revenue(doctor, last_month_start, today)
+#             yearly_revenue = self.aggregate_revenue(doctor, last_year_start, today)
+
+#             doctor_revenue_data.append({
+#                 'doctor': doctor,
+#                 'daily_revenue': daily_revenue,
+#                 'weekly_revenue': weekly_revenue,
+#                 'monthly_revenue': monthly_revenue,
+#                 'yearly_revenue': yearly_revenue,
+#             })
+            
+#             total_revenue += (
+#                 sum(entry['total_revenue'] for entry in daily_revenue) +
+#                 sum(entry['total_revenue'] for entry in weekly_revenue) +
+#                 sum(entry['total_revenue'] for entry in monthly_revenue) +
+#                 sum(entry['total_revenue'] for entry in yearly_revenue)
+#             )
+
+#         context = {
+#             'doctor_revenue_data': doctor_revenue_data,
+#             'total_revenue': total_revenue,
+#         }
+
+#         return render(request, 'analytics_by_doctor.html', context)
+
+#     def aggregate_revenue(self, doctor, start_date, end_date):
+#         revenue_data = []
+#         payment_types = doctor.medicalhistory_set.values('payment_type__name').annotate(count=Count('id'))
+
+#         for payment_type in payment_types:
+#             total_revenue = 0
+#             medical_histories = doctor.medicalhistory_set.filter(
+#                 payment_type__name=payment_type['payment_type__name'],
+#                 created_at__date__range=(start_date, end_date)
+#             )
+#             for history in medical_histories:
+#                 total_revenue += history.calculate_total_price()
+                
+#             revenue_data.append({
+#                 'payment_type': payment_type['payment_type__name'],
+#                 'total_revenue': total_revenue,
+#             })
+#         return revenue_data
+
+class AnalyticsByDoctorView(View):
+    def get(self, request, *args, **kwargs):
+        doctors = Doctor.objects.all()
+
+        # Calculate date ranges for each time interval
+        today = datetime.now().date()
+        last_week_start = today - timedelta(days=today.weekday() + 7)
+        last_month_start = today.replace(day=1) - timedelta(days=1)
+        last_year_start = today.replace(month=1, day=1) - timedelta(days=1)
+
+        doctor_revenue_data = []
+        
+        for doctor in doctors:
+            daily_revenue = self.aggregate_revenue(doctor, today, today)
+            weekly_revenue = self.aggregate_revenue(doctor, last_week_start, today)
+            monthly_revenue = self.aggregate_revenue(doctor, last_month_start, today)
+            yearly_revenue = self.aggregate_revenue(doctor, last_year_start, today)
+            total_revenue = self.calculate_total_revenue(doctor, today, today)
+
+            doctor_revenue_data.append({
+                'doctor': doctor,
+                'daily_revenue': daily_revenue,
+                'weekly_revenue': weekly_revenue,
+                'monthly_revenue': monthly_revenue,
+                'yearly_revenue': yearly_revenue,
+                'total_revenue': total_revenue,
+            })
+
+        context = {
+            'doctor_revenue_data': doctor_revenue_data,
+        }
+
+        return render(request, 'analytics_by_doctor.html', context)
+
+    def aggregate_revenue(self, doctor, start_date, end_date):
+        revenue_data = []
+        payment_types = doctor.medicalhistory_set.values('payment_type__name').annotate(count=Count('id'))
+
+        for payment_type in payment_types:
+            total_revenue = 0
+            medical_histories = doctor.medicalhistory_set.filter(
+                payment_type__name=payment_type['payment_type__name'],
+                created_at__date__range=(start_date, end_date)
+            )
+            for history in medical_histories:
+                total_revenue += history.calculate_total_price()
+                
+            revenue_data.append({
+                'payment_type': payment_type['payment_type__name'],
+                'total_revenue': total_revenue,
+            })
+        return revenue_data
+
+    def calculate_total_revenue(self, doctor, start_date, end_date):
+        total_revenue = 0
+        medical_histories = doctor.medicalhistory_set.filter(
+            created_at__date__range=(start_date, end_date)
+        )
+        for history in medical_histories:
+            total_revenue += history.calculate_total_price()
+        return total_revenue
+    
+
+def generate_invoice_pdf(request, history_id):
+    history = MedicalHistory.objects.get(id=history_id)
+
+    # Get template HTML
+    template = get_template('invoice.html')
+    context = {'history': history}
+    html = template.render(context)
+
+    # Create a PDF file
+    pdf_file = HTML(string=html).write_pdf()
+
+    # Generate a response
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="invoice_{history.id}.pdf"'
+    return response
+
+
+class UpcomingFollowUpView(View):
+    def get(self, request, *args, **kwargs):
+        # Calculate the date for tomorrow
+        tomorrow = datetime.now().date() + timedelta(days=1)
+        
+        # Retrieve all medical history records with upcoming follow-up date
+        upcoming_follow_ups = MedicalHistory.objects.filter(follow_up_date=tomorrow)
+        
+        context = {
+            'upcoming_follow_ups': upcoming_follow_ups,
+            'upcoming_follow_up_count': upcoming_follow_ups.count()
+        }
+        
+        return render(request, 'upcoming_follow_ups.html', context)

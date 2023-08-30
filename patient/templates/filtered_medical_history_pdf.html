@@ -1,38 +1,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
+
     <title>Filtered Medical History</title>
-    
+   
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+</style>    
 </head>
 <body>
     <h1 class="text-center">Medical History</h1>
 
     
-    <table class="table table-bordered">
+ 
         
+        <table class="styled-table" style="text-align: center;">
+        <thead>
             <tr>
                 <th>#</th>
                 <th>Patient</th>
                 <th>Treatment</th>
+                <th>Investgation</th>
+                <th>Medication</th>
                 <th>Amount</th>
                 <th>Payment Type</th>
                 <th>Date</th>
             </tr>
         
-        
+        </thead>
+        <tbody>
             {% for record in filtered_records %}
                 <tr>
                     <th>{{forloop.counter}}</th>
                     <td>{{ record.patient }}</td>
-                    <td>{{ record.treatment }}</td>
-                    <td>{{ record.amount }}</td>
+                    <td>
+                        <ul>
+                            {% for category in record.treatment.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for category in record.investgation.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for category in record.medication.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>{{ record.calculate_total_price }}</td>
                     <td>{{ record.payment_type }}</td>
                     <td>{{ record.created_at|date }}</td>
                 </tr>
             {% endfor %}
-        
+        </tbody>
     </table>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+ 
+    
 </body>
 </html>

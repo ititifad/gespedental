@@ -66,7 +66,7 @@
                   <input type="search" id="form1" class="form-control" name="firstname_contains" />
                   <label class="form-label" for="form1"><small>Search Patient Firstname</small></label>
                 </div>
-                <button type="submit" class="btn btn-secondary">
+                <button type="submit" class="btn btn-info">
                   <i class="fas fa-search"></i>
                 </button>
               </div>
@@ -92,12 +92,12 @@
                 <input type="search" id="form1" class="form-control" name="lastname_contains" />
                 <label class="form-label" for="form1"><small>Search Patient Lastname</small></label>
               </div>
-              <button type="submit" class="btn btn-secondary">
+              <button type="submit" class="btn btn-info">
                 <i class="fas fa-search"></i>
               </button>
             </div>
 <br>
-              <button class="btn btn-secondary" type="submit"><i class="lni-search"></i> Search</button>
+              <button class="btn btn-info" type="submit"><i class="lni-search"></i> Search</button>
             </form>
           </div>
         </div>
@@ -110,19 +110,22 @@
 <div class="container pt-5 mb-5">
     <h2 class="text-center">Registered Patients</h2>
     <div class="table-responsive">
-        <table class="table align-middle mb-0 text-center text-nowrap table-sm">
-            <thead>
+        <table class="table align-middle mb-0 text-center text-nowrap table-sm table-bordered">
+            <thead class="bg-light">
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">View</th>
+                    
                     <th scope="col">Firstname</th>
                     <th scope="col">Lastname</th>
                     <th scope="col">Address</th>
                     <th scope="col">Gender</th>
                     <th scope="col">DOB</th>
+                    <th scope="col">Weight</th>
+                    <th scope="col">B/Pressure</th>
                     <th scope="col">Phone Number</th>
                     <th scope="col">Date Added</th>
                     <th scope="col">Add Treatment</th>
+                    <th scope="col">View Patient</th>
                 </tr>
             </thead>
             <tbody>
@@ -130,15 +133,18 @@
                     {% for patient in patients %}
                     <tr>
                         <th scope="row">{{forloop.counter}}</th>
-                        <td><a button class="btn btn-secondary btn-sm" href="{% url 'patient-detail' patient.id %}">View More</button></a></td>
+                        
                         <td>{{ patient.firstname }}</td>
                         <td>{{ patient.lastname }}</td>
                         <td>{{ patient.address }}</td>
                         <td>{{ patient.gender}}</td>
                         <td>{{patient.DOB}}</td>
+                        <td>{{patient.weight}} kg</td>
+                        <td>{{patient.BPressure}}mmHg</td>
                         <td>{{patient.phone_number}}</td>
                         <td>{{patient.created_at|date:"F d, Y"}}</td>
-                        <td><a button class="btn btn-primary btn-sm" href="{% url 'patient-medicals' patient.id %}">Add Treatment</button></a></td>
+                        <td><a button class="btn btn-info btn-sm" href="{% url 'patient-medicals' patient.id %}">Add Treatment</button></a></td>
+                        <td><a button class="btn btn-info btn-sm" href="{% url 'patient-detail' patient.id %}">View</button></a></td>
                     </tr>
                     {% endfor %}
                 {% else %}

@@ -65,6 +65,8 @@
             <tr>
                 <th>Patient</th>
                 <th>Treatment</th>
+                <th>Investgation</th>
+                <th>Medication</th>
                 <th>Amount</th>
                 <th>Payment Type</th>
                 <th>Date</th>
@@ -74,8 +76,28 @@
             {% for record in filtered_records %}
                 <tr>
                     <td>{{ record.patient }}</td>
-                    <td>{{ record.treatment }}</td>
-                    <td>{{ record.amount }}</td>
+                    <td>
+                        <ul>
+                            {% for category in record.treatment.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for category in record.investgation.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for category in record.medication.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>{{ record.calculate_total_price }}</td>
                     <td>{{ record.payment_type }}</td>
                     <td>{{ record.created_at|date }}</td>
                 </tr>

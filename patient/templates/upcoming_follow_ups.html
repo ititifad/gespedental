@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+
+    <div class="container pt-4 mb-5">
+        <h2 class="text-center">Upcoming Follow-Up Dates</h1>
+        {% if upcoming_follow_ups %}
+            <div class="row">
+                {% for history in upcoming_follow_ups %}
+                    <div class="col-md-6">
+                        <div class="notification">
+                            <div class="bell-icon">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <p>
+                                Follow-up for patient {{ history.patient.firstname }} {{ history.patient.lastname }}
+                                is scheduled for {{ history.follow_up_date }}
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No upcoming follow-up dates for tomorrow.</p>
+        {% endif %}
+    </div>
+{% endblock content %}

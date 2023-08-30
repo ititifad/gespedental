@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+{% block content %}
+<style>
+    ul{
+        list-style-type: none;
+    }
+</style>
+
+<div class="container pt-5">
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="col-lg-6">
+      <div class="contents">
+        <div class="search-bar">
+          <div class="search-inner">
+            <form method="GET" class="search-form" action=".">
+              <div class="input-group">
+                <div class="form-outline">
+                  <input type="search" id="form1" class="form-control" name="firstname_contains" />
+                  <label class="form-label" for="form1"><small>Search Patient Firstname</small></label>
+                </div>
+                <button type="submit" class="btn btn-info">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <!-- <div class="form-group inputwithicon">
+                <i class="lni-tag"></i>
+                <input type="text" name="customword" class="form-control" placeholder="Enter Product Keyword">
+              </div> -->
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+   
+
+    <div class="col-lg-6">
+      <div class="contents">
+        <div class="search-bar">
+          <div class="search-inner">
+            
+            <div class="input-group">
+              <div class="form-outline">
+                <input type="search" id="form1" class="form-control" name="lastname_contains" />
+                <label class="form-label" for="form1"><small>Search Patient Lastname</small></label>
+              </div>
+              <button type="submit" class="btn btn-info">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+<br>
+              <button class="btn btn-info" type="submit"><i class="lni-search"></i> Search</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container pt-5 mb-5">
+    <h2 class="text-center">Registered Patients</h2>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0 text-center text-nowrap table-sm table-bordered">
+            <thead class="bg-light">
+                <tr>
+                    <th scope="col">#</th>
+                    
+                    <th scope="col">Patient</th>
+                    <!-- <th scope="col">ROS</th> -->
+                    <!-- <th scope="col">Examination</th> -->
+                    <!-- <th scope="col">Diagnosis</th> -->
+                    <th scope="col">Investgation</th>
+                    <th scope="col">Treatment</th>
+                    <th scope="col">Medication</th>
+                    <th scope="col">Amount (TZS)</th>
+                    <!-- <th scope="col">Payment Type</th> -->
+                    <!-- <th scope="col">Doctor</th> -->
+                    <!-- <th scope="col">Follow Up</th> -->
+
+                    <th scope="col">Date Attended</th>
+                    <th scope="col">Generate Invoice</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if history %}
+                {% for patient in history %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    
+                    <td>{{ patient.patient }}</td>
+                    <!-- <td>
+                        <ul>
+                            {% for category in patient.review_of_systems.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for category in patient.examination.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for category in patient.diagnosis.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td> -->
+                    <td>
+                        <ul>
+                            {% for category in patient.investgation.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for category in patient.treatment.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for category in patient.medication.all %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>{{ patient.calculate_total_price|intcomma }}</td>
+                    <!-- <td>{{ patient.payment_type}}</td> -->
+                    <!-- <td>{{ patient.doctor}}</td> -->
+                    <!-- <td>{{ patient.follow_up_date}}</td> -->
+               
+                    <td>{{patient.created_at|date:"F d, Y"}}</td>
+                        <td><a button class="btn btn-info btn-sm" href="{% url 'generate_invoice_pdf' patient.id %}">Generate</button></a></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4">No Registered Patients.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+  </div>
+
+
+{% endblock content %}
