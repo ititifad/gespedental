@@ -10,16 +10,17 @@
 
     <form method="get">
         <div class="row mb-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label">{{ filter.form.patient.label_tag }}</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" name="{{ filter.form.patient.name }}"
+                    <input type="text" class="form-control" name="{{ filter.form.patient.firstname }}"
                            value="{{ filter.form.patient.value }}">
                     
                 </div>
             </div>
             
-            <div class="col-md-4">
+            
+            <div class="col-md-3">
                 <label class="form-label">{{ filter.form.treatment.label_tag }}</label>
                
                 <select class="form-select" name="{{ filter.form.treatment.name }}">
@@ -29,7 +30,17 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <label class="form-label">{{ filter.form.review_of_systems.label_tag }}</label>
+               
+                <select class="form-select" name="{{ filter.form.review_of_systems.name }}">
+                    <option value="" selected>Choose Review of System...</option>
+                    {% for review_of_systems in filter.form.review_of_systems.field.queryset %}
+                        <option value="{{ review_of_systems.pk }}" {% if review_of_systems.pk == filter.form.review_of_systems.value %}selected{% endif %}>{{ review_of_systems }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
                 <label class="form-label">{{ filter.form.payment_type.label_tag }}</label>
                 <select class="form-select" name="{{ filter.form.payment_type.name }}">
                     <option value="" selected>Choose Payment Type...</option>
@@ -60,7 +71,7 @@
 
     <br>
     <br>
-    <table class="table table-sm">
+    <table class="table table-sm table-bordered">
         <thead>
             <tr>
                 <th>Patient</th>

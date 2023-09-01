@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container">
+    <h1>Medical History Report</h1>
+
+
+    <form method="get">
+        {{ filter.form|crispy }}
+        <button type="submit" class="btn">Apply Filters</button>
+    </form>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Review of Systems</th>
+                <th>Examination</th>
+                <th>Diagnosis</th>
+                <th>Investigation</th>
+                <th>Treatment</th>
+                <th>Medication</th>
+                <th>Payment Type</th>
+                <th>Doctor</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in filtered_records %}
+                <tr>
+                    <td>{{ record.patient }}</td>
+                    <td>{{ record.review_of_systems.all|join:", " }}</td>
+                    <td>{{ record.examination.all|join:", " }}</td>
+                    <td>{{ record.diagnosis.all|join:", " }}</td>
+                    <td>{{ record.investgation.all|join:", " }}</td>
+                    <td>{{ record.treatment.all|join:", " }}</td>
+                    <td>{{ record.medication.all|join:", " }}</td>
+                    <td>{{ record.payment_type }}</td>
+                    <td>{{ record.doctor }}</td>
+                    <td>{{ record.created_at }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

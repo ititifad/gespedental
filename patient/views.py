@@ -15,7 +15,7 @@ from xhtml2pdf import pisa
 from django.template.loader import render_to_string
 import io
 import calendar
-from .filters import MedicalHistoryFilter
+from .filters import MedicalHistoryFilter, MedicalFilter
 
 import csv
 from io import BytesIO
@@ -311,7 +311,10 @@ class FilteredMedicalHistoryView(View):
     template_name = 'filtered_medical_history.html'
 
     def get(self, request):
-        filter = MedicalHistoryFilter(request.GET, queryset=MedicalHistory.objects.all())
+        # Initialize the filter with GET data
+        filter = MedicalHistoryFilter(request.GET, queryset=MedicalHistory.objects.order_by('-id'))
+
+        # Get the filtered records
         filtered_records = filter.qs
 
         context = {
@@ -637,3 +640,21 @@ class UpcomingFollowUpView(View):
         }
         
         return render(request, 'upcoming_follow_ups.html', context)
+    
+
+class MedicalHistoryReportView(View):
+    template_name = 'medical_history_report.html'
+
+    def get(self, request):
+        # Initialize the filter with GET data
+        filter = MedicalHistoryFilter(request.GET, queryset=MedicalHistory.objects.all())
+
+        # Get the filtered records
+        filtered_records = filter.qs
+
+        context = {
+            'filter': filter,
+            'filtered_records': filtered_records,
+        }
+
+        return render(request, self.template_name, context)

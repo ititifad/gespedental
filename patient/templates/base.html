@@ -14,7 +14,13 @@
   
     <style>
 
-
+nav ul li {
+   list-style:none;
+   display:inline-block;
+   
+   
+   margin-right:40px;
+}
    
 .notification {
         display: flex;
@@ -85,12 +91,12 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
         <li class="nav-item">
-          <a class="nav-link nav-smaller-bold" href="{% url 'register' %}">Patient Registration</a>
+          <a class="nav-link nav-smaller-bold badge rounded-pill badge-primary px-4" href="{% url 'register' %}">Patient Registration</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link nav-smaller-bold" href="{% url 'history' %}">Generate Invoice</a>
+          <a class="nav-link nav-smaller-bold badge rounded-pill badge-primary" href="{% url 'history' %}">Generate Invoice</a>
         </li>
-
+        
         <!-- <li class="nav-item">
           <a class="nav-link nav-smaller-bold" href="{% url 'analytics' %}">Analytics Report</a>
         </li>
@@ -99,7 +105,7 @@
         </li> -->
         <li class="nav-item">
           
-          <a class="nav-link nav-smaller-bold" href="{% url 'filtered' %}">Filter Data</a>
+          <a class="nav-link nav-smaller-bold badge rounded-pill badge-primary" href="{% url 'filtered' %}">Filter Data</a>
         </li>
       <!-- </li>
       <li class="nav-item">
@@ -119,7 +125,23 @@
       </ul>
     </div>
 
-    <li class="nav-item">
+<li class="nav-item me-3 me-lg-1">
+    <a class="nav-link" href="{% url 'upcoming_follow_up' %}">
+        <i class="fas fa-bell fa-2x fa-lg"></i>
+        <span class="badge rounded-pill badge-notification bg-danger {% if upcoming_follow_up_count > 0 %}shake-animation{% endif %}" style="font-size: 14px; padding: 4px 6px;">
+            {% if upcoming_follow_up_count > 0 %}
+                {{ upcoming_follow_up_count }}
+            {% else %}
+                0
+            {% endif %}
+        </span>
+    </a>
+</li>
+
+  
+  
+
+    <!-- <li class="nav-item">
       <a class="nav-link" href="{% url 'upcoming_follow_up' %}">
           <span class="position-relative">
               <i class="fas fa-bell"></i>
@@ -133,7 +155,7 @@
               {% endif %}
           </span>
       </a>
-  </li>
+  </li> -->
   
 
       </ul>

@@ -15,5 +15,6 @@ urlpatterns = [
     path('export/pdf/', views.ExportFilteredMedicalHistoryPDFView.as_view(), name='export_pdf'),
     path('upcoming-follow-up/', views.UpcomingFollowUpView.as_view(), name='upcoming_follow_up'),
     path('analytics/doctors/', views.AnalyticsByDoctorView.as_view(), name='analytics_by_doctor'),
+    path('medical/reports/', views.MedicalHistoryReportView.as_view(), name='medical_reports'),
     path('generate_invoice/<int:history_id>/', views.generate_invoice_pdf, name='generate_invoice_pdf'),
 ]
