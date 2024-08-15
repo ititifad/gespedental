@@ -159,7 +159,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-CSRF_TRUSTED_ORIGINS = ["https://geitadental.up.railway.app/"]
+CSRF_TRUSTED_ORIGINS = ["https://geitadental.up.railway.app"]
 
 
 LOGIN_REDIRECT_URL = 'home'
