@@ -92,7 +92,7 @@
                     <tr>
                         <td>{{ treatment.name }}</td>
                         
-                        <td>{{ treatment.price|intcomma }}</td>
+                        <td>{{ treatment.cash_price|intcomma }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -110,7 +110,7 @@
                 {% for investigation in history.investgation.all %}
                     <tr>
                         <td>{{ investigation.name }}</td>
-                        <td>{{ investigation.price|intcomma }}</td>
+                        <td>{{ investigation.cash_price|intcomma }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -128,7 +128,7 @@
                 {% for medication in history.medication.all %}
                     <tr>
                         <td>{{ medication.name }}</td>
-                        <td>{{ medication.price|intcomma }}</td>
+                        <td>{{ medication.cash_price|intcomma }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

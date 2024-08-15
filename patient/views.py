@@ -16,7 +16,7 @@ from django.template.loader import render_to_string
 import io
 import calendar
 from .filters import MedicalHistoryFilter, MedicalFilter
-
+from django.contrib.auth.decorators import login_required
 import csv
 from io import BytesIO
 
@@ -28,7 +28,7 @@ def is_valid_queryparam(param):
 
 today = datetime.now().date()
 
-
+@login_required
 def medical_history(request):
     qs = MedicalHistory.objects.order_by('-id')
     firstname_contains_query = request.GET.get('firstname_contains')
@@ -47,6 +47,7 @@ def medical_history(request):
 
     return render(request, 'medical_history.html', context)
 
+@login_required
 def home(request):
     qs = Patient.objects.order_by('-id')
     
@@ -95,24 +96,73 @@ def register_patient(request):
 
     return render(request, 'add_patient.html', {'form':form})
 
-
+@login_required
 def Medication(request, pk):
     patient = Patient.objects.get(id=pk)
-    form = MedicalHistoryForm(initial={'patient':patient})
+    form = MedicalHistoryForm(initial={'patient': patient})
+
     if request.method == 'POST':
         form = MedicalHistoryForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, f'Successfully Added Medical History for {patient}')
+            medical_history = form.save(commit=False)
+            medical_history.save()
+
+            # Save the many-to-many relationships
+            form.save_m2m()
+
+            # Retrieve discounts from the form
+            treatment_discount = form.cleaned_data.get('treatment_discount', 0)
+            investgation_discount = form.cleaned_data.get('investgation_discount', 0)
+            medication_discount = form.cleaned_data.get('medication_discount', 0)
+
+            # Handling treatment with discount
+            for treatment in form.cleaned_data.get('treatment_cash', []):
+                discounted_price = treatment.cash_price * (1 - (treatment_discount / 100))
+                # Log or process the discounted price if necessary
+                medical_history.treatment.add(treatment)
+                # You can print/log discounted_price for debugging
+                print(f"Discounted cash treatment price: {discounted_price}")
+
+            for treatment in form.cleaned_data.get('treatment_insurance', []):
+                discounted_price = treatment.insurance_price * (1 - (treatment_discount / 100))
+                medical_history.treatment.add(treatment)
+                print(f"Discounted insurance treatment price: {discounted_price}")
+
+            # Handling investigation with discount
+            for investgation in form.cleaned_data.get('investgation_cash', []):
+                discounted_price = investgation.cash_price * (1 - (investgation_discount / 100))
+                medical_history.investgation.add(investgation)
+                print(f"Discounted cash investigation price: {discounted_price}")
+
+            for investgation in form.cleaned_data.get('investgation_insurance', []):
+                discounted_price = investgation.insurance_price * (1 - (investgation_discount / 100))
+                medical_history.investgation.add(investgation)
+                print(f"Discounted insurance investigation price: {discounted_price}")
+
+            # Handling medication with discount
+            for medication in form.cleaned_data.get('medication_cash', []):
+                discounted_price = medication.cash_price * (1 - (medication_discount / 100))
+                medical_history.medication.add(medication)
+                print(f"Discounted cash medication price: {discounted_price}")
+
+            for medication in form.cleaned_data.get('medication_insurance', []):
+                discounted_price = medication.insurance_price * (1 - (medication_discount / 100))
+                medical_history.medication.add(medication)
+                print(f"Discounted insurance medication price: {discounted_price}")
+
+            messages.success(request, f'Successfully Added Medical History for {patient.firstname} {patient.lastname}')
             return redirect('home')
-    context = {'form':form, 'patient': patient}
+
+    context = {'form': form, 'patient': patient}
     return render(request, 'medical_history_form.html', context)
 
 
+
+@login_required
 def patient_detail(request, pk):
     patient = Patient.objects.get(id=pk)
 
-    treatments = patient.patientmedicalhistory.all()
+    treatments = patient.patientmedicalhistory.all().order_by('-id')
     
     context = {
         'patient': patient,
@@ -174,11 +224,11 @@ class AnalyticsView(View):
 
         # Treatment Analysis
         popular_treatments = MedicalHistory.objects.values('treatment__name').annotate(count=Count('id')).order_by('-count')[:5]
-        total_revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('treatment__price')).order_by('-total_revenue')
+        total_revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('treatment__cash_price')).order_by('-total_revenue')
 
         # Payment Insights
         payment_type_distribution = MedicalHistory.objects.values('payment_type__name').annotate(count=Count('id'))
-        revenue_by_payment_type = MedicalHistory.objects.values('payment_type__name').annotate(total_revenue=Sum('treatment__price')).order_by('-total_revenue')
+        revenue_by_payment_type = MedicalHistory.objects.values('payment_type__name').annotate(total_revenue=Sum('treatment__cash_price')).order_by('-total_revenue')
 
         # Patient Engagement
         patient_visits_over_time = MedicalHistory.objects.annotate(date=TruncDate('created_at')).values('date').annotate(visit_count=Count('id')).order_by('date')
@@ -186,9 +236,9 @@ class AnalyticsView(View):
         new_patient_acquisition_rate = Patient.objects.filter(created_at__date=today).count() / Patient.objects.all().count() * 100
 
         # Revenue Trends
-        monthly_revenue_trends = MedicalHistory.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(total_revenue=Sum('treatment__price')).order_by('month')
-        yearly_revenue_trends = MedicalHistory.objects.annotate(year=TruncYear('created_at')).values('year').annotate(total_revenue=Sum('treatment__price')).order_by('year')
-        revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('treatment__price')).order_by('-total_revenue')
+        monthly_revenue_trends = MedicalHistory.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(total_revenue=Sum('treatment__cash_price')).order_by('month')
+        yearly_revenue_trends = MedicalHistory.objects.annotate(year=TruncYear('created_at')).values('year').annotate(total_revenue=Sum('treatment__cash_price')).order_by('year')
+        revenue_by_treatment = MedicalHistory.objects.values('treatment__name').annotate(total_revenue=Sum('treatment__cash_price')).order_by('-total_revenue')
 
         # Medical History
         total_medical_history_entries = MedicalHistory.objects.count()
