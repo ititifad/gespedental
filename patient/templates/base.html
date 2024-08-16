@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <link rel="shortcut icon" type="image/jpg" href="/media/2185051_dentist_dentistry_medical_oral_hygiene_tooth_icon_7VPLBN5.png"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Electronic Health Records</title>
+    <title>GSDC Electronic Patients Records</title>
     <link rel="stylesheet" href="{% static 'css/mdb.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/color_switch.css' %}">
  
@@ -94,6 +94,20 @@ nav ul li {
           <a class="nav-link nav-smaller-bold badge rounded-pill badge-dark px-4" href="{% url 'register' %}">Patient Registration</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="{% url 'upcoming_follow_up' %}">
+            <i class="fas fa-bell fa-2x fa-lg"></i>
+            <span class="badge rounded-pill badge-notification bg-danger {% if upcoming_follow_up_count > 0 %}shake-animation{% endif %}" style="font-size: 14px; padding: 4px 6px;">
+                {% if upcoming_follow_up_count > 0 %}
+                    {{ upcoming_follow_up_count }}
+                {% else %}
+                    0
+                {% endif %}
+            </span>
+        </a>
+        </li>
+        {% for group in user.groups.all %}
+        {% if group.name == 'admin' %}
+        <li class="nav-item">
           <a class="nav-link nav-smaller-bold badge rounded-pill badge-dark" href="{% url 'history' %}">Generate Invoice</a>
         </li>
         
@@ -107,42 +121,38 @@ nav ul li {
           
           <a class="nav-link nav-smaller-bold badge rounded-pill badge-dark" href="{% url 'filtered' %}">Filter Data</a>
         </li>
+
+        
       <!-- </li>
       <li class="nav-item">
         <a class="nav-link nav-smaller-bold" href="{% url 'analytics_by_doctor' %}">Analytics by Doctor</a>
     </li> -->
+    <li class="nav-item">
+      <div class="btn-group">
+        <button type="button" class="btn btn-sm btn-dark dropdown-toggle dropdown-toggle-split" data-mdb-toggle="dropdown" aria-expanded="false">
+          View Reports
+        </button>
+        <ul class="dropdown-menu">
+          
+          <li><a class="dropdown-item" href="{% url 'analytics' %}">Analytics Report</a></li>
+          <li><a class="dropdown-item" href="{% url 'reports' %}">Revenue Report</a></li>
+          <li><a class="dropdown-item" href="{% url 'analytics_by_doctor' %}">Doctor's Report</a></li>
+        </li>
+
+        {% endif %}
+        {% endfor %}
+
+    
+    
+      </ul>
+      
+    </div>
+    
 
     <li class="nav-item">
       <a class="nav-link nav-smaller-bold badge rounded-pill badge-danger" href="{% url 'logout' %}">Logout</a>
     </li>
-    <li class="nav-item">
-    <div class="btn-group">
-      <button type="button" class="btn btn-sm btn-dark dropdown-toggle dropdown-toggle-split" data-mdb-toggle="dropdown" aria-expanded="false">
-        View Reports
-      </button>
-      <ul class="dropdown-menu">
-        
-        <li><a class="dropdown-item" href="{% url 'analytics' %}">Analytics Report</a></li>
-        <li><a class="dropdown-item" href="{% url 'reports' %}">Revenue Report</a></li>
-        <li><a class="dropdown-item" href="{% url 'analytics_by_doctor' %}">Doctor's Report</a></li>
-      </li>
-      </ul>
-    </div>
-
-<li class="nav-item me-3 me-lg-1">
-    <a class="nav-link" href="{% url 'upcoming_follow_up' %}">
-        <i class="fas fa-bell fa-2x fa-lg"></i>
-        <span class="badge rounded-pill badge-notification bg-danger {% if upcoming_follow_up_count > 0 %}shake-animation{% endif %}" style="font-size: 14px; padding: 4px 6px;">
-            {% if upcoming_follow_up_count > 0 %}
-                {{ upcoming_follow_up_count }}
-            {% else %}
-                0
-            {% endif %}
-        </span>
-    </a>
-</li>
-
-  
+    
 
 
     <!-- <li class="nav-item">
@@ -180,7 +190,7 @@ nav ul li {
   <!-- Navbar -->
   <main role="main" class="container">
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-12">
         {% if messages %}
           {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">

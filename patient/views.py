@@ -7,6 +7,7 @@ from django.db.models.functions import TruncDate, TruncMonth, TruncYear  # Add t
 from .utils import render_to_pdf
 from django.conf import settings
 from django.template.loader import get_template
+from .decorators import allowed_users, admin_only
 from django.contrib import messages
 from django.db.models import Count, Sum
 from django.http import HttpResponse
@@ -47,7 +48,8 @@ def medical_history(request):
 
     return render(request, 'medical_history.html', context)
 
-@login_required
+@login_required(login_url='login')
+@admin_only
 def home(request):
     qs = Patient.objects.order_by('-id')
     
@@ -77,7 +79,8 @@ def home(request):
 
     return render(request, 'home.html', context)
 
-
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['receptionist','admin'])
 def register_patient(request):
     if request.method == 'POST':
         form = PatientRegistrationForm(request.POST)
@@ -96,7 +99,8 @@ def register_patient(request):
 
     return render(request, 'add_patient.html', {'form':form})
 
-@login_required
+@login_required(login_url='login')
+@admin_only
 def Medication(request, pk):
     patient = Patient.objects.get(id=pk)
     form = MedicalHistoryForm(initial={'patient': patient})
@@ -158,7 +162,8 @@ def Medication(request, pk):
 
 
 
-@login_required
+@login_required(login_url='login')
+@admin_only
 def patient_detail(request, pk):
     patient = Patient.objects.get(id=pk)
 
@@ -409,7 +414,8 @@ class ExportFilteredMedicalHistoryPDFView(View):
 
 
 
-
+@login_required(login_url='login')
+@admin_only
 def filter(request):
     qs = MedicalHistory.objects.all()
     investgations = Investgation.objects.all()
