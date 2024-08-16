@@ -1,9 +1,10 @@
 from django import forms
 import django_filters
-from .models import MedicalHistory, Treatment, PaymentType, ReviewofSystem
+from .models import MedicalHistory, Treatment, PaymentType, ReviewofSystem, Investgation
 
 class MedicalHistoryFilter(django_filters.FilterSet):
     patient = django_filters.CharFilter(field_name='patient__firstname', lookup_expr='icontains')
+    investgation = django_filters.ModelChoiceFilter(field_name='investgation', queryset=Investgation.objects.all())
     treatment = django_filters.ModelChoiceFilter(field_name='treatment', queryset=Treatment.objects.all())
     payment_type = django_filters.ModelChoiceFilter(field_name='payment_type', queryset=PaymentType.objects.all())
     review_of_systems = django_filters.ModelChoiceFilter(field_name='review_of_systems', queryset=ReviewofSystem.objects.all())

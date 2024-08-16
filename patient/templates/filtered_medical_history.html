@@ -18,6 +18,18 @@
                     
                 </div>
             </div>
+
+
+            <div class="col-md-3">
+                <label class="form-label">{{ filter.form.investgation.label_tag }}</label>
+               
+                <select class="form-select" name="{{ filter.form.investgation.name }}">
+                    <option value="" selected>Choose Investigations...</option>
+                    {% for investgation in filter.form.investgation.field.queryset %}
+                        <option value="{{ investgation.pk }}" {% if investgation.pk == filter.form.investgation.value %}selected{% endif %}>{{ investgation }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             
             
             <div class="col-md-3">

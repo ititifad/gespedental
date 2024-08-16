@@ -412,12 +412,14 @@ class ExportFilteredMedicalHistoryPDFView(View):
 
 def filter(request):
     qs = MedicalHistory.objects.all()
+    investgations = Investgation.objects.all()
     treatments = Treatment.objects.all()
     payments_types = PaymentType.objects.all()
     firstname_contains_query = request.GET.get('firstname_contains')
     lastname_contains_query = request.GET.get('lastname_contains')
     date_min = request.GET.get('date_min')
     date_max = request.GET.get('date_max')
+    investgation = request.GET.get('investgation')
     treatment = request.GET.get('treatment')
     type = request.GET.get('payment_type')
 
@@ -436,6 +438,9 @@ def filter(request):
     if is_valid_queryparam(date_max):
         qs = qs.filter(created_at__lt=date_max)
 
+    if is_valid_queryparam(investgation) and investgation != 'Choose...':
+        qs = qs.filter(investgation__name=investgation)
+
     if is_valid_queryparam(treatment) and treatment != 'Choose...':
         qs = qs.filter(treatment__name=treatment)
 
@@ -446,6 +451,7 @@ def filter(request):
 
     context = {
         'queryset':qs,
+        'investgations':investgations,
         'treatments':treatments,
         'payments_types':payments_types
     }
