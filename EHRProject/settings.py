@@ -98,10 +98,11 @@ DATABASES = {
         'NAME': 'railway',
         'USER': 'postgres',
         'PASSWORD': 'bGWbzToLShjMuhdWfGmyJrENmawytNhy',
-        'HOST': 'postgres-e2744bf5.railway.internal',
-        'PORT': '5432',
+        'HOST': 'autorack.proxy.rlwy.net',
+        'PORT': '59564',
     }
 }
+# postgresql://postgres:bGWbzToLShjMuhdWfGmyJrENmawytNhy@autorack.proxy.rlwy.net:59564/railway
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -159,7 +160,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-CSRF_TRUSTED_ORIGINS = ["https://gespedental-production.up.railway.app"]
+CSRF_TRUSTED_ORIGINS = ["https://geitadental.up.railway.app"]
 
 
 LOGIN_REDIRECT_URL = 'home'
