@@ -7,7 +7,7 @@ class DateInput(DateInput):
     input_type = 'date'
 
 class PatientRegistrationForm(forms.ModelForm):
-
+    DOR = DateField(widget=DateInput)
     class Meta:
         model = Patient
         fields = '__all__'
