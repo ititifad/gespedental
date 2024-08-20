@@ -8,54 +8,62 @@
         font-weight: bold;
     }
 </style>
-    <div class="container mb-5">
-        <h1 class="mt-4 text-center">Doctor Revenue Analytics</h1>
+<div class="container mb-5">
+    <h1 class="mt-4 text-center">Doctor Revenue and Patient Analytics</h1>
 
-        {% for doctor_data in doctor_revenue_data %}
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h2 class="card-title">{{ doctor_data.doctor.name }} Revenue</h2>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3 border border-1 px-4 py-3">
-                            <h3 class="card-title">Daily Revenue</h3>
-                            <ul class="list-unstyled">
-                                {% for entry in doctor_data.daily_revenue %}
-                                    <li>{{ entry.payment_type }}: TZS {{ entry.total_revenue|intcomma }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col-md-3 border border-1 px-4 py-3">
-                            <h3 class="card-title">Weekly Revenue</h3>
-                            <ul class="list-unstyled">
-                                {% for entry in doctor_data.weekly_revenue %}
-                                    <li>{{ entry.payment_type }}: TZS {{ entry.total_revenue|intcomma }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col-md-3 border border-1 px-4 py-3">
-                            <h3 class="card-title">Monthly Revenue</h3>
-                            <ul class="list-unstyled">
-                                {% for entry in doctor_data.monthly_revenue %}
-                                    <li>{{ entry.payment_type }}: TZS {{ entry.total_revenue|intcomma }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col-md-3 border border-1 px-4 py-3">
-                            <h3 class="card-title">Yearly Revenue</h3>
-                            <ul class="list-unstyled">
-                                {% for entry in doctor_data.yearly_revenue %}
-                                    <li>{{ entry.payment_type }}: TZS {{ entry.total_revenue|intcomma }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-
-                    <h3 class="mt-3">Total Revenue</h3>
-                    <p>Total Revenue: TZS {{ doctor_data.total_revenue|intcomma }}</p>
-                </div>
+    {% for doctor_data in doctor_data %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h2 class="card-title">{{ doctor_data.doctor.name }} Analytics</h2>
             </div>
-        {% endfor %}
-    </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 border border-1 px-4 py-3">
+                        <h3 class="card-title">Daily</h3>
+                        <ul class="list-unstyled">
+                            <li>Revenue:</li>
+                            {% for entry in doctor_data.daily_revenue %}
+                                <li>{{ entry.payment_type }}: TZS {{ entry.total_revenue|intcomma }}</li>
+                            {% endfor %}
+                            <li>Patients Attended: {{ doctor_data.daily_patients }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 border border-1 px-4 py-3">
+                        <h3 class="card-title">Weekly</h3>
+                        <ul class="list-unstyled">
+                            <li>Revenue:</li>
+                            {% for entry in doctor_data.weekly_revenue %}
+                                <li>{{ entry.payment_type }}: TZS {{ entry.total_revenue|intcomma }}</li>
+                            {% endfor %}
+                            <li>Patients Attended: {{ doctor_data.weekly_patients }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 border border-1 px-4 py-3">
+                        <h3 class="card-title">Monthly</h3>
+                        <ul class="list-unstyled">
+                            <li>Revenue:</li>
+                            {% for entry in doctor_data.monthly_revenue %}
+                                <li>{{ entry.payment_type }}: TZS {{ entry.total_revenue|intcomma }}</li>
+                            {% endfor %}
+                            <li>Patients Attended: {{ doctor_data.monthly_patients }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 border border-1 px-4 py-3">
+                        <h3 class="card-title">Yearly</h3>
+                        <ul class="list-unstyled">
+                            <li>Revenue:</li>
+                            {% for entry in doctor_data.yearly_revenue %}
+                                <li>{{ entry.payment_type }}: TZS {{ entry.total_revenue|intcomma }}</li>
+                            {% endfor %}
+                            <li>Patients Attended: {{ doctor_data.yearly_patients }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="mt-3">Total Revenue</h3>
+                <p>Total Revenue: TZS {{ doctor_data.total_revenue|intcomma }}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}

@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from django.forms import DateInput
+from django.forms import inlineformset_factory
 from django.forms.fields import DateField
 
 class DateInput(DateInput):
@@ -100,6 +101,7 @@ class MedicalHistoryForm(forms.ModelForm):
             'medication_discount', 
             'payment_type', 
             'follow_up_date', 
+            'notes',
             'doctor'
         ]
 
@@ -125,3 +127,5 @@ class MedicalHistoryForm(forms.ModelForm):
 
         self.fields['medication_insurance'].queryset = Medication.objects.all()
         self.fields['medication_insurance'].label_from_instance = lambda obj: f"{obj.name} - {obj.insurance_price} TZS"
+
+

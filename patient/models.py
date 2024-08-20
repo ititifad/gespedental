@@ -37,6 +37,9 @@ class Treatment(models.Model):
 
     def __str__(self):
         return self.name
+
+
+
     
 class ReviewofSystem(models.Model):
     name = models.CharField(max_length=255)
@@ -105,6 +108,7 @@ class MedicalHistory(models.Model):
     # amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_type = models.ForeignKey(PaymentType, on_delete=models.CASCADE)
     follow_up_date = models.DateField(null=True, blank=True)
+    notes = models.CharField(max_length=2000,blank=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.PROTECT, null=True)
     treatment_discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     investigation_discount = models.DecimalField(max_digits=5, decimal_places=2, default=0)
@@ -134,9 +138,6 @@ class MedicalHistory(models.Model):
                 total_price += item.cash_price * (1 - self.medication_discount / 100)
 
         return total_price
-    
 
     class Meta:
         verbose_name_plural = 'Medical History'
-
-

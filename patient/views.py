@@ -161,7 +161,6 @@ def Medication(request, pk):
     return render(request, 'medical_history_form.html', context)
 
 
-
 @login_required(login_url='login')
 @admin_only
 def patient_detail(request, pk):
@@ -580,30 +579,39 @@ class AnalyticsByDoctorView(View):
 
         # Calculate date ranges for each time interval
         today = datetime.now().date()
-        last_week_start = today - timedelta(days=today.weekday() + 7)
-        last_month_start = today.replace(day=1) - timedelta(days=1)
-        last_year_start = today.replace(month=1, day=1) - timedelta(days=1)
+        last_week_start = today - timedelta(days=today.weekday())
+        last_month_start = today.replace(day=1)
+        last_year_start = today.replace(month=1, day=1)
 
-        doctor_revenue_data = []
+        doctor_data = []
         
         for doctor in doctors:
             daily_revenue = self.aggregate_revenue(doctor, today, today)
             weekly_revenue = self.aggregate_revenue(doctor, last_week_start, today)
             monthly_revenue = self.aggregate_revenue(doctor, last_month_start, today)
             yearly_revenue = self.aggregate_revenue(doctor, last_year_start, today)
-            total_revenue = self.calculate_total_revenue(doctor, today, today)
+            total_revenue = self.calculate_total_revenue(doctor, last_year_start, today)
 
-            doctor_revenue_data.append({
+            daily_patients = self.count_patients(doctor, today, today)
+            weekly_patients = self.count_patients(doctor, last_week_start, today)
+            monthly_patients = self.count_patients(doctor, last_month_start, today)
+            yearly_patients = self.count_patients(doctor, last_year_start, today)
+
+            doctor_data.append({
                 'doctor': doctor,
                 'daily_revenue': daily_revenue,
                 'weekly_revenue': weekly_revenue,
                 'monthly_revenue': monthly_revenue,
                 'yearly_revenue': yearly_revenue,
                 'total_revenue': total_revenue,
+                'daily_patients': daily_patients,
+                'weekly_patients': weekly_patients,
+                'monthly_patients': monthly_patients,
+                'yearly_patients': yearly_patients,
             })
 
         context = {
-            'doctor_revenue_data': doctor_revenue_data,
+            'doctor_data': doctor_data,
         }
 
         return render(request, 'analytics_by_doctor.html', context)
@@ -636,6 +644,10 @@ class AnalyticsByDoctorView(View):
             total_revenue += history.calculate_total_price()
         return total_revenue
     
+    def count_patients(self, doctor, start_date, end_date):
+        return doctor.medicalhistory_set.filter(
+            created_at__date__range=(start_date, end_date)
+        ).count()   
 
 # def generate_invoice_pdf(request, history_id):
 #     history = MedicalHistory.objects.get(id=history_id)
