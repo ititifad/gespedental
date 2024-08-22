@@ -9,7 +9,6 @@ urlpatterns = [
     path('filters', views.filter, name='filter'),
     path('treatment/<int:pk>/', views.Medication, name='patient-medicals'),
     path('reports/', views.RevenueByPaymentTypeView.as_view(), name='reports'),
-    path('patient/<int:pk>/', views.patient_detail, name='patient-detail'),
     path('filtered/', views.FilteredMedicalHistoryView.as_view(), name='filtered'),
     path('export/csv/', views.ExportFilteredMedicalHistoryView.as_view(), name='export_csv'),
     path('export/pdf/', views.ExportFilteredMedicalHistoryPDFView.as_view(), name='export_pdf'),
@@ -17,4 +16,7 @@ urlpatterns = [
     path('analytics/doctors/', views.AnalyticsByDoctorView.as_view(), name='analytics_by_doctor'),
     path('medical/reports/', views.MedicalHistoryReportView.as_view(), name='medical_reports'),
     path('generate_invoice/<int:history_id>/', views.generate_invoice_pdf, name='generate_invoice_pdf'),
+    path('medical-history/update/<int:pk>/', views.update_medical_history, name='update_medical_history'),
+    path('medical-history/delete/<int:pk>/', views.delete_medical_history, name='delete_medical_history'),
+    path('patient/<int:pk>/', views.patient_detail, name='patient-detail'),
 ]

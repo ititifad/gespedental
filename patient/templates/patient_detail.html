@@ -91,6 +91,8 @@
                     <th scope="col">Follow Up</th>
 
                     <th scope="col">Date Attended</th>
+                    <th scope="col">Update</th>
+                    <th scope="col">Delete</th>
                     
                 </tr>
             </thead>
@@ -149,7 +151,11 @@
                         <td>{{ patient.follow_up_date}}</td>
                    
                         <td>{{patient.created_at|date:"F d, Y"}}</td>
-                        
+                        <td><a href="{% url 'update_medical_history' patient.id %}" class="btn btn-primary">Update</a></td>
+                        <td>
+                            <a href="{% url 'delete_medical_history' patient.id %}" class="btn btn-danger" 
+               onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 {% else %}

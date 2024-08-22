@@ -1,5 +1,5 @@
 import os
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Patient, MedicalHistory
 from .forms import *
 from datetime import datetime, timedelta
@@ -175,6 +175,82 @@ def patient_detail(request, pk):
     return render(request, 'patient_detail.html', context)
 
 
+@login_required(login_url='login')
+@admin_only
+def update_medical_history(request, pk):
+    # Get the existing medical history record
+    medical_history = get_object_or_404(MedicalHistory, id=pk)
+    patient = medical_history.patient
+    
+    # Initialize the form with the existing instance
+    form = MedicalHistoryForm(request.POST or None, instance=medical_history)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            medical_history = form.save(commit=False)
+            medical_history.save()
+
+            # Save the many-to-many relationships
+            form.save_m2m()
+
+            # Retrieve discounts from the form
+            treatment_discount = form.cleaned_data.get('treatment_discount', 0)
+            investgation_discount = form.cleaned_data.get('investgation_discount', 0)
+            medication_discount = form.cleaned_data.get('medication_discount', 0)
+
+            # Clear existing treatments, investigations, and medications
+            medical_history.treatment.clear()
+            medical_history.investgation.clear()
+            medical_history.medication.clear()
+
+            # Handling treatment with discount
+            for treatment in form.cleaned_data.get('treatment_cash', []):
+                discounted_price = treatment.cash_price * (1 - (treatment_discount / 100))
+                medical_history.treatment.add(treatment)
+                print(f"Discounted cash treatment price: {discounted_price}")
+
+            for treatment in form.cleaned_data.get('treatment_insurance', []):
+                discounted_price = treatment.insurance_price * (1 - (treatment_discount / 100))
+                medical_history.treatment.add(treatment)
+                print(f"Discounted insurance treatment price: {discounted_price}")
+
+            # Handling investigation with discount
+            for investgation in form.cleaned_data.get('investgation_cash', []):
+                discounted_price = investgation.cash_price * (1 - (investgation_discount / 100))
+                medical_history.investgation.add(investgation)
+                print(f"Discounted cash investigation price: {discounted_price}")
+
+            for investgation in form.cleaned_data.get('investgation_insurance', []):
+                discounted_price = investgation.insurance_price * (1 - (investgation_discount / 100))
+                medical_history.investgation.add(investgation)
+                print(f"Discounted insurance investigation price: {discounted_price}")
+
+            # Handling medication with discount
+            for medication in form.cleaned_data.get('medication_cash', []):
+                discounted_price = medication.cash_price * (1 - (medication_discount / 100))
+                medical_history.medication.add(medication)
+                print(f"Discounted cash medication price: {discounted_price}")
+
+            for medication in form.cleaned_data.get('medication_insurance', []):
+                discounted_price = medication.insurance_price * (1 - (medication_discount / 100))
+                medical_history.medication.add(medication)
+                print(f"Discounted insurance medication price: {discounted_price}")
+
+            messages.success(request, f'Successfully updated Medical History for {patient.firstname} {patient.lastname}')
+            return redirect('patient-detail', pk=patient.id)
+
+    context = {'form': form, 'patient': patient, 'medical_history': medical_history}
+    return render(request, 'medical_history_form.html', context)
+
+
+@login_required(login_url='login')
+@admin_only
+def delete_medical_history(request, pk):
+    medical_history = get_object_or_404(MedicalHistory, id=pk)
+    patient_id = medical_history.patient.id
+    medical_history.delete()
+    messages.success(request, 'Medical history deleted successfully.')
+    return redirect('patient-detail', pk=patient_id)
 # class AnalyticsView(View):
 #     def get(self, request, *args, **kwargs):
 #         # Patient Demographics
