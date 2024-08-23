@@ -80,6 +80,32 @@ def home(request):
     return render(request, 'home.html', context)
 
 @login_required(login_url='login')
+@admin_only
+def update_patient(request, pk):
+    patient = get_object_or_404(Patient, id=pk)
+
+    if request.method == 'POST':
+        form = PatientRegistrationForm(request.POST, instance=patient)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Successfully updated information History for {patient.firstname} {patient.lastname}')
+            return redirect('home')
+    else:
+        form = PatientRegistrationForm(instance=patient)
+
+    context = {'form': form, 'patient': patient}
+    return render(request, 'update_patient.html', context)
+
+
+@login_required(login_url='login')
+@admin_only
+def delete_patient(request, pk):
+    patient = get_object_or_404(Patient, id=pk)
+    patient.delete()
+    messages.success(request, 'Patient deleted successfully.')
+    return redirect('home')  # Redirect to the home page or patient list after deletion
+
+@login_required(login_url='login')
 @allowed_users(allowed_roles=['receptionist','admin'])
 def register_patient(request):
     if request.method == 'POST':
@@ -98,6 +124,8 @@ def register_patient(request):
             
 
     return render(request, 'add_patient.html', {'form':form})
+
+
 
 @login_required(login_url='login')
 @admin_only

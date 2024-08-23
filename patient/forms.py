@@ -3,6 +3,7 @@ from .models import *
 from django.forms import DateInput
 from django.forms import inlineformset_factory
 from django.forms.fields import DateField
+from .widgets import *
 
 class DateInput(DateInput):
     input_type = 'date'
@@ -42,6 +43,35 @@ class MedicalHistoryForm(forms.ModelForm):
         required=False,
         label="Investigation (Insurance)"
     )
+
+    PERMANENT_DENTITION_CHOICES = [
+        ('11', '11'), ('12', '12'), ('13', '13'), ('14', '14'), ('15', '15'), ('16', '16'), ('17', '17'), ('18', '18'),
+        ('21', '21'), ('22', '22'), ('23', '23'), ('24', '24'), ('25', '25'), ('26', '26'), ('27', '27'), ('28', '28'),
+        ('31', '31'), ('32', '32'), ('33', '33'), ('34', '34'), ('35', '35'), ('36', '36'), ('37', '37'), ('38', '38'),
+        ('41', '41'), ('42', '42'), ('43', '43'), ('44', '44'), ('45', '45'), ('46', '46'), ('47', '47'), ('48', '48')
+    ]
+
+    TEMPORARY_DENTITION_CHOICES = [
+        ('51', '51'), ('52', '52'), ('53', '53'), ('54', '54'), ('55', '55'),
+        ('61', '61'), ('62', '62'), ('63', '63'), ('64', '64'), ('65', '65'),
+        ('71', '71'), ('72', '72'), ('73', '73'), ('74', '74'), ('75', '75'),
+        ('81', '81'), ('82', '82'), ('83', '83'), ('84', '84'), ('85', '85')
+    ]
+
+    permanent_dentition = forms.MultipleChoiceField(
+        choices=PERMANENT_DENTITION_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Permanent Dentition"
+    )
+
+    temporary_dentition = forms.MultipleChoiceField(
+        choices=TEMPORARY_DENTITION_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Temporary Dentition"
+    )
+
 
     medication_cash = forms.ModelMultipleChoiceField(
         queryset=Medication.objects.all(),
@@ -94,6 +124,8 @@ class MedicalHistoryForm(forms.ModelForm):
             'treatment_insurance', 
             'investgation_cash', 
             'investgation_insurance', 
+            'permanent_dentition', 
+            'temporary_dentition',
             'medication_cash', 
             'medication_insurance', 
             'treatment_discount', 
@@ -129,3 +161,4 @@ class MedicalHistoryForm(forms.ModelForm):
         self.fields['medication_insurance'].label_from_instance = lambda obj: f"{obj.name} - {obj.insurance_price} TZS"
 
 
+    

@@ -2,7 +2,32 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<style>
 
+    .dentition-chart {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .teeth-row {
+        display: flex;
+        justify-content: center;
+    }
+    .teeth-row label {
+        margin: 0 2px;
+        text-align: center;
+    }
+    .teeth-row input[type="checkbox"] {
+        display: block;
+        margin: 0 auto 2px;
+    }
+    .dentition-chart.temporary .teeth-row {
+        width: 50%;
+    }
+</style>
+
+</style>
 
 <div class="container pt-2 mb-5">
   <h2 class="text-center">{% if medical_history %}Update{% else %}Add{% endif %} Medical History for {{ patient.firstname }} {{ patient.lastname }}</h2>
@@ -14,6 +39,7 @@
                 {% csrf_token %}
                 <!-- 2 column grid layout with text inputs for the first and last names -->
 
+                
                 {{form|crispy}}
                 
                 
