@@ -1,33 +1,9 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load custom_tags %}
 
 {% block content %}
-<style>
 
-    .dentition-chart {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .teeth-row {
-        display: flex;
-        justify-content: center;
-    }
-    .teeth-row label {
-        margin: 0 2px;
-        text-align: center;
-    }
-    .teeth-row input[type="checkbox"] {
-        display: block;
-        margin: 0 auto 2px;
-    }
-    .dentition-chart.temporary .teeth-row {
-        width: 50%;
-    }
-</style>
-
-</style>
 
 <div class="container pt-2 mb-5">
   <h2 class="text-center">{% if medical_history %}Update{% else %}Add{% endif %} Medical History for {{ patient.firstname }} {{ patient.lastname }}</h2>
@@ -40,7 +16,328 @@
                 <!-- 2 column grid layout with text inputs for the first and last names -->
 
                 
-                {{form|crispy}}
+                <!-- Patient Field -->
+    <div class="mb-4">
+        
+        {{ form.patient|as_crispy_field }}
+    </div>
+    
+    <!-- History Field -->
+    <div class="mb-4">
+        
+        {{ form.history|as_crispy_field }}
+    </div>
+    
+    
+
+    
+    
+    <div class="row">
+        <div class="col">
+          <!-- Name input -->
+          <div data-mdb-input-init class="form-outline">
+            <!-- Review of Systems -->
+            <div class="mb-4">
+                <label class="form-label">Review of Systems</label>
+                {% for option in form.review_of_systems %}
+                    <div class="form-check">
+                        {{ option.tag }}
+                        <label class="form-check-label">{{ option.choice_label }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <!-- Name input -->
+          <div data-mdb-input-init class="form-outline">
+            <!-- Examination -->
+            <div class="mb-4">
+                <label class="form-label">Examination</label>
+                {% for option in form.examination %}
+                    <div class="form-check">
+                        {{ option.tag }}
+                        <label class="form-check-label">{{ option.choice_label }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+
+          </div>
+        </div>
+        <div class="col">
+          <!-- Email input -->
+          <div data-mdb-input-init class="form-outline">
+            <!-- Diagnosis -->
+            <div class="mb-4">
+                <label class="form-label">Diagnosis</label>
+                {% for option in form.diagnosis %}
+                    <div class="form-check">
+                        {{ option.tag }}
+                        <label class="form-check-label">{{ option.choice_label }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    <hr>
+
+
+    <div class="row mb-4">
+        <div class="col">
+          <!-- Treatment Cash -->
+            <div class="mb-4">
+                <label class="form-label">Treatment (Cash)</label>
+                {% for option in form.treatment_cash %}
+                    <div class="form-check">
+                        {{ option.tag }}
+                        <label class="form-check-label">{{ option.choice_label }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        <div class="col">
+          <!-- Treatment Insurance -->
+            <div class="mb-4">
+                <label class="form-label">Treatment (Insurance)</label>
+                {% for option in form.treatment_insurance %}
+                    <div class="form-check">
+                        {{ option.tag }}
+                        <label class="form-check-label">{{ option.choice_label }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+      </div>
+    <hr>
+    
+    <div class="row mb-4">
+        <div class="col">
+          <!-- Investigation Cash -->
+    <div class="mb-4">
+        <label class="form-label">Investigation (Cash)</label>
+        {% for option in form.investgation_cash %}
+            <div class="form-check">
+                {{ option.tag }}
+                <label class="form-check-label">{{ option.choice_label }}</label>
+            </div>
+        {% endfor %}
+    </div>
+
+        </div>
+        <div class="col">
+          <!-- Investigation Insurance -->
+    <div class="form-outline mb-4">
+        <label class="form-label">Investigation (Insurance)</label>
+        {% for option in form.investgation_insurance %}
+            <div class="form-check">
+                {{ option.tag }}
+                <label class="form-check-label">{{ option.choice_label }}</label>
+            </div>
+        {% endfor %}
+    </div>
+
+        </div>
+      </div>
+
+      <hr>
+    <!-- Permanent Dentition -->
+    <div class="mb-4">
+        <label class="form-label">Permanent Dentition</label>
+        <div class="row">
+            <!-- Upper Row of Permanent Dentition -->
+            <div class="col-6">
+                <div class="d-flex justify-content-between">
+                    {% for number in "18 17 16 15 14 13 12 11"|split_string %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="permanent_dentition" id="perm_{{ number }}" value="{{ number }}">
+                            <label for="perm_{{ number }}" class="form-check-label">{{ number }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="d-flex justify-content-between">
+                    {% for number in "21 22 23 24 25 26 27 28"|split_string %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="permanent_dentition" id="perm_{{ number }}" value="{{ number }}">
+                            <label for="perm_{{ number }}" class="form-check-label">{{ number }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Lower Row of Permanent Dentition -->
+            <div class="col-6">
+                <div class="d-flex justify-content-between">
+                    {% for number in "48 47 46 45 44 43 42 41"|split_string %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="permanent_dentition" id="perm_{{ number }}" value="{{ number }}">
+                            <label for="perm_{{ number }}" class="form-check-label">{{ number }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="d-flex justify-content-between">
+                    {% for number in "31 32 33 34 35 36 37 38"|split_string %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="permanent_dentition" id="perm_{{ number }}" value="{{ number }}">
+                            <label for="perm_{{ number }}" class="form-check-label">{{ number }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+<hr>
+    <!-- Temporary Dentition -->
+    <div class="mb-4">
+        <label class="form-label">Temporary Dentition</label>
+        <div class="row">
+            <!-- Upper Row of Temporary Dentition -->
+            <div class="col-6">
+                <div class="d-flex justify-content-between">
+                    {% for number in "55 54 53 52 51"|split_string %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="temporary_dentition" id="temp_{{ number }}" value="{{ number }}">
+                            <label for="temp_{{ number }}" class="form-check-label">{{ number }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="d-flex justify-content-between">
+                    {% for number in "61 62 63 64 65"|split_string %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="temporary_dentition" id="temp_{{ number }}" value="{{ number }}">
+                            <label for="temp_{{ number }}" class="form-check-label">{{ number }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Lower Row of Temporary Dentition -->
+            <div class="col-6">
+                <div class="d-flex justify-content-between">
+                    {% for number in "85 84 83 82 81"|split_string %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="temporary_dentition" id="temp_{{ number }}" value="{{ number }}">
+                            <label for="temp_{{ number }}" class="form-check-label">{{ number }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="d-flex justify-content-between">
+                    {% for number in "71 72 73 74 75"|split_string %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="temporary_dentition" id="temp_{{ number }}" value="{{ number }}">
+                            <label for="temp_{{ number }}" class="form-check-label">{{ number }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    
+    
+
+    <div class="row mb-4">
+        <div class="col">
+          <!-- Medication Cash -->
+    <div class="mb-4">
+        <label class="form-label">Medication (Cash)</label>
+        {% for option in form.medication_cash %}
+            <div class="form-check">
+                {{ option.tag }}
+                <label class="form-check-label">{{ option.choice_label }}</label>
+            </div>
+        {% endfor %}
+    </div>
+
+        </div>
+        <div class="col">
+          <!-- Medication Insurance -->
+    <div class="mb-4">
+        <label class="form-label">Medication (Insurance)</label>
+        {% for option in form.medication_insurance %}
+            <div class="form-check">
+                {{ option.tag }}
+                <label class="form-check-label">{{ option.choice_label }}</label>
+            </div>
+        {% endfor %}
+    </div>
+        </div>
+      </div>
+
+      <hr>
+    
+
+    <div class="row">
+        <div class="col">
+          <!-- Name input -->
+            <!-- Treatment Discount -->
+    <div class="mb-4">
+        
+        {{ form.treatment_discount|as_crispy_field }}
+    </div>
+          
+        </div>
+        <div class="col">
+          <!-- Name input -->
+            <!-- Investigation Discount -->
+            <div class="mb-4">
+                
+                {{ form.investgation_discount|as_crispy_field }}
+            </div>
+          
+        </div>
+        <div class="col">
+          <!-- Email input -->
+            <!-- Medication Discount -->
+                <div class="mb-4">
+                    
+                    {{ form.medication_discount|as_crispy_field }}
+                </div>
+          
+        </div>
+      </div>
+      <hr>
+    
+
+
+    <div class="row mb-4">
+        <div class="col">
+          <!-- Payment Type -->
+    <div class="mb-4">
+        
+        {{ form.payment_type|as_crispy_field }}
+    </div>
+        </div>
+        <div class="col">
+              <!-- Follow-up Date -->
+    <div class="mb-4">
+        
+        {{ form.follow_up_date|as_crispy_field }}
+    </div>
+        </div>
+      </div>
+    <!-- Notes -->
+    <div class="mb-4">
+        
+        {{ form.notes|as_crispy_field }}
+    </div>
+
+    <!-- Doctor -->
+    <div class="mb-4">
+        
+        {{ form.doctor|as_crispy_field }}
+    </div>
+
                 
                 
                 <!-- Submit button -->
